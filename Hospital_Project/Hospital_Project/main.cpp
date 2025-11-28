@@ -1,4 +1,4 @@
-#define CHEMIN_DOSSIER_DONNEES ".....CEMIN DONNEES....../"
+#define CHEMIN_DOSSIER_DONNEES "/Data/"
 #define NOM_FICHIER_LISTE_FICHIER_DONNEES "data.txt"
 #define NOM_FICHIER_LISTE_SORTIE "sortie.txt"
 

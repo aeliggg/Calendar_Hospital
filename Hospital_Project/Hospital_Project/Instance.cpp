@@ -820,3 +820,13 @@ bool Instance::is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour)
         throw string(err);
     }
 }
+
+
+vector<vector<int>> Instance::ajout_conges_personne(vector<vector<int>> v_v_Solution_Init) {
+    for (int p = 0; p < i_Nombre_Personne; p++) {
+        for (int j = 0; j < v_Personne[p].v_Id_Jour_Conges.size(); j++) {
+            int day_off = v_Personne[p].v_Id_Jour_Conges[j];
+            v_v_Solution_Init[p][day_off] = -1; 
+        }
+	}
+}
