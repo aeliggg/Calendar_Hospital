@@ -820,3 +820,40 @@ bool Instance::is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour)
         throw string(err);
     }
 }
+
+vector<vector<int>> Shift_succede(Instance inst,vector<vector<int>> v_v_Instance){
+            vector<vector<int>> v_v_Instance_Avec_Contrainte;
+            int iNbPersonne=v_v_Instance.size();
+            int iNbJour=v_v_Instance[0].size();
+            for (int iIndexPersonne=0;iIndexPersonne<v_v_Instance.size();iIndexPersonne++){
+                for (int iIndexJour=1;iIndexJour<v_v_Instance[0].size();iIndexJour++){
+                    int iShiftAVerifier=v_v_Instance[iIndexPersonne][iIndexJour];
+                    if (inst.is_possible_Shift_Succede(iShiftAVerifier,iShiftAVerifier-1)==false){
+                        while(inst.is_possible_Shift_Succede(iShiftAVerifier,iShiftAVerifier-1)==false){
+                            if (iShiftAVerifier>=inst.get_Nombre_Shift()){
+                                cout<<"Erreur : pas de solution possible avec les contraintes de succession de shift."<<endl;
+                                return vector<vector<int>> ();
+                            }
+                        }
+                        v_v_Instance_Avec_Contrainte[iIndexPersonne][iIndexJour]=iShiftAVerifier;
+                    }
+                    else{
+                        v_v_Instance_Avec_Contrainte[iIndexPersonne][iIndexJour]=iShiftAVerifier;
+                }
+            }
+            return v_v_Instance_Avec_Contrainte;
+        }
+    }     
+
+vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour) {
+    vector<vector<int>> v_v_Instance_Sans_Contrainte;
+    int iShiftAFaire=0;
+    for (int iIndexPersonne=0;iIndexPersonne<i_Nombre_Personne;iIndexPersonne++){
+        for (int iIndexJour=0;iIndexJour<i_Nombre_Jour;iIndexJour++){
+            iShiftAFaire=rand()%i_Nombre_Shift;
+            v_v_Instance_Sans_Contrainte[iIndexPersonne][iIndexJour]=iShiftAFaire;
+        }
+    }
+            return v_v_Instance_Sans_Contrainte;
+}
+
