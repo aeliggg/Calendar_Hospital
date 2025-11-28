@@ -73,7 +73,20 @@ class Instance
         int get_Nbre_Personne_Requis_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
         int get_Poids_Personne_En_Plus_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
         int get_Poids_Personne_En_Moins_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
-    
+
+    /* Fonction de création d'une première instance sans aucune contrainte*/
+        vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour) {
+            vector<vector<int>> v_v_Instance_Sans_Contrainte;
+            int iShiftAFaire=0;
+            for (int iIndexPersonne=0;iIndexPersonne<i_Nombre_Personne;iIndexPersonne++){
+                for (int iIndexJour=0;iIndexJour<i_Nombre_Jour;iIndexJour++){
+                    iShiftAFaire=(iIndexPersonne + iIndexJour) % i_Nombre_Shift;
+                    v_v_Instance_Sans_Contrainte[iIndexPersonne][iIndexJour]=iShiftAFaire;
+                }
+            }
+            return v_v_Instance_Sans_Contrainte;
+        }
+            
     /* Fonction peut-être utile */
     bool is_possible_Shift_Succede(int i_Id_Shift, int i_Id_Shift_Successeur) ;
     bool is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour) ;
