@@ -6,6 +6,7 @@
 #include <fstream>
 #include <chrono>
 #include <algorithm>
+#include <Windows.h>
 #include "Instance.hpp"
 #include "Solution.hpp"
 
@@ -15,6 +16,7 @@ int Resolution(Instance * instance);
 
 int main(int argc, const char * argv[])
 {
+    SetConsoleOutputCP(CP_UTF8);
     try
     {
         string s_tmp;
