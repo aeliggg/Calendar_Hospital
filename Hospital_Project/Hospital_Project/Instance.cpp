@@ -527,7 +527,7 @@ int Instance::get_Nombre_Shift(void)
     return i_Nombre_Shift;
 }
 
-vector<Personne> Instance::get_vector_Personne(void)
+vector<Instance::Personne> Instance::get_vector_Personne(void)
 {
     return v_Personne;
 }

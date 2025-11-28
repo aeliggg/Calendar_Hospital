@@ -20,6 +20,9 @@ class Instance
         public:
             int i_duree;                        //Durée en minute du shift
             vector<int> v_Id_Shift_Suc_Interdit;//Ensemble des Ids de shifts qui ne peuvent pas succéder à ce shift
+        
+            Shift() : i_duree(0) {}             // Initialise i_duree à 0
+			Shift(int duree) : i_duree(duree) {}// Initialise i_duree à duree
         };
         vector<Shift> v_Shift;                   //L'ensemble des shifts
 
@@ -76,10 +79,10 @@ class Instance
         const Personne& get_Personne(int i_Id_Personne) const {
             return v_Personne[i_Id_Personne];
         }
+        vector<Instance::Personne> get_vector_Personne(void);
 
-    /* Fonction de création d'une première instance sans aucune contrainte*/
-    vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour);
-    vector<vector<int>> Shift_succede(vector<vector<int>> v_v_Instance);      
+
+     
     /* Fonction peut-être utile */
     bool is_possible_Shift_Succede(int i_Id_Shift, int i_Id_Shift_Successeur) ;
     bool is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour) ;
