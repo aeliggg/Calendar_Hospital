@@ -127,16 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Solution.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Instance.hpp" />
-    <ClInclude Include="Solution.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resultats.xlsx" />
+    <ClCompile Include="Hospital_Project.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
