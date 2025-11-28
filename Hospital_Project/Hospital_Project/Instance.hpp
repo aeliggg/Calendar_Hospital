@@ -73,6 +73,9 @@ class Instance
         int get_Nbre_Personne_Requis_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
         int get_Poids_Personne_En_Plus_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
         int get_Poids_Personne_En_Moins_Jour_Shift(int i_Id_Jour, int i_Id_Shift) ;
+        const Personne& get_Personne(int i_Id_Personne) const {
+            return v_Personne[i_Id_Personne];
+        }
 
     /* Fonction de création d'une première instance sans aucune contrainte*/
     vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour);
@@ -81,9 +84,6 @@ class Instance
     bool is_possible_Shift_Succede(int i_Id_Shift, int i_Id_Shift_Successeur) ;
     bool is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour) ;
 
-	vector<vector<int>> ajout_conges_personne(vector<vector<int>> v_v_Solution_Init);
-    vector<vector<int>> suppression_jours_WE_de_trop(vector<vector<int>> v_v_Solution_Init);
-    vector<vector<int>> suppression_shifts_par_type_de_trop(vector<vector<int>> v_v_Solution_Init);
 
 
 };

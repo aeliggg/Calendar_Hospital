@@ -20,6 +20,14 @@ class Solution
         Solution();
         virtual ~Solution();
     bool Verification_Solution(Instance *instance);
+    
+    /* Fonction de création d'une première instance sans aucune contrainte*/
+    vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour);
+    vector<vector<int>> Shift_succede(vector<vector<int>> v_v_Instance);      
+    vector<vector<int>> creation_Solution_Initiale(vector<vector<int>> v_v_Instance);
+	vector<vector<int>> ajout_conges_personne(vector<vector<int>> v_v_Solution_Init);
+    vector<vector<int>> suppression_jours_WE_de_trop(vector<vector<int>> v_v_Solution_Init);
+    vector<vector<int>> suppression_shifts_par_type_de_trop(vector<vector<int>> v_v_Solution_Init);
 };
 
 #endif

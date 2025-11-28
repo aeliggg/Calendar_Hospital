@@ -48,6 +48,8 @@ int main(int argc, const char * argv[])
                     chrono_start = chrono::system_clock::now();
                     i_best_solution_score=Resolution(instance);
                     cout<< " Fin de résolution de "<<s_tmp<<endl;
+                    cout<<" Je te donne juste la solution initiale que j'ai trouvée" <<endl;
+                    vector<vector<int>> v_v_Solution_Initiale=instance->creation_Solution_Initiale(instance);
                     chrono_end = chrono::system_clock::now();
                     elapsed=chrono_end-chrono_start;
                     fichier_Sortie<<s_chemin <<"\t"<<elapsed.count()<<"\t"<< i_best_solution_score <<endl;

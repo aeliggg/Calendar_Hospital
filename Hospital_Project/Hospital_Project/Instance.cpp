@@ -526,6 +526,12 @@ int Instance::get_Nombre_Shift(void)
 {
     return i_Nombre_Shift;
 }
+
+vector<Personne> Instance::get_vector_Personne(void)
+{
+    return v_Personne;
+}
+
 int Instance::get_Shift_Duree(int i_Id_Shift) 
 {
     if(v_Shift.size()==0)
@@ -818,87 +824,5 @@ bool Instance::is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour)
     {
         string err = "Instance.cpp : is_Available_Personne_Jour : l'Id Personne doit être compris entre 0 et " +to_string(i_Nombre_Personne)+ ".";
         throw string(err);
-    }
-}
-
-vector<vector<int>> Shift_succede(Instance inst,vector<vector<int>> v_v_Instance){
-            vector<vector<int>> v_v_Instance_Avec_Contrainte;
-            int iNbPersonne=v_v_Instance.size();
-            int iNbJour=v_v_Instance[0].size();
-            for (int iIndexPersonne=0;iIndexPersonne<v_v_Instance.size();iIndexPersonne++){
-                for (int iIndexJour=1;iIndexJour<v_v_Instance[0].size();iIndexJour++){
-                    int iShiftAVerifier=v_v_Instance[iIndexPersonne][iIndexJour];
-                    if (inst.is_possible_Shift_Succede(iShiftAVerifier,iShiftAVerifier-1)==false){
-                        while(inst.is_possible_Shift_Succede(iShiftAVerifier,iShiftAVerifier-1)==false){
-                            if (iShiftAVerifier>=inst.get_Nombre_Shift()){
-                                cout<<"Erreur : pas de solution possible avec les contraintes de succession de shift."<<endl;
-                                return vector<vector<int>> ();
-                            }
-                        }
-                        v_v_Instance_Avec_Contrainte[iIndexPersonne][iIndexJour]=iShiftAVerifier;
-                    }
-                    else{
-                        v_v_Instance_Avec_Contrainte[iIndexPersonne][iIndexJour]=iShiftAVerifier;
-                }
-            }
-            return v_v_Instance_Avec_Contrainte;
-        }
-    }     
-
-vector<vector<int>> creation_Instance_Sans_Contrainte(int i_Nombre_Personne, int i_Nombre_Shift, int i_Nombre_Jour) {
-    vector<vector<int>> v_v_Instance_Sans_Contrainte;
-    int iShiftAFaire=0;
-    for (int iIndexPersonne=0;iIndexPersonne<i_Nombre_Personne;iIndexPersonne++){
-        for (int iIndexJour=0;iIndexJour<i_Nombre_Jour;iIndexJour++){
-            iShiftAFaire=rand()%i_Nombre_Shift;
-            v_v_Instance_Sans_Contrainte[iIndexPersonne][iIndexJour]=iShiftAFaire;
-        }
-    }
-            return v_v_Instance_Sans_Contrainte;
-}
-
-
-
-vector<vector<int>> Instance::ajout_conges_personne(vector<vector<int>> v_v_Solution_Init) {
-    for (int p = 0; p < i_Nombre_Personne; p++) {
-        for (int j = 0; j < v_Personne[p].v_Id_Jour_Conges.size(); j++) {
-            int day_off = v_Personne[p].v_Id_Jour_Conges[j];
-            v_v_Solution_Init[p][day_off] = -1; 
-        }
-	}
-}
-
-vector<vector<int>> Instance::suppression_jours_WE_de_trop(vector<vector<int>> v_v_Solution_Init) {
-    for (int p = 0; p < i_Nombre_Personne; p++) {
-        int compteur_WE = 0;
-        for (int j = 0; j < i_Nombre_Jour; j++) {
-            if ((j % 7 == 5) || (j % 7 == 6)) { 
-                if (v_v_Solution_Init[p][j] != -1) { 
-                    compteur_WE++;
-                    if (compteur_WE > v_Personne[p].i_Nbre_WE_Max) {
-                        v_v_Solution_Init[p][j] = -1; 
-                    }
-                }
-            }
-		}
-    }
-}
-
-vector<vector<int>> Instance::suppression_shifts_par_type_de_trop(vector<vector<int>> v_v_Solution_Init) {
-    for (int p = 0; p < i_Nombre_Personne; p++) {
-        vector<int> compteur_shifts = {};
-        for (int i = 0; i < i_Nombre_Shift; i++) {
-            compteur_shifts.push_back(0); 
-		}
-
-        for (int j = 0; j < i_Nombre_Jour; j++) {
-			int shift_actuel = v_v_Solution_Init[p][j];
-            if (shift_actuel!= -1) {
-				compteur_shifts[shift_actuel]++;
-                if (compteur_shifts[shift_actuel] > v_Personne[p].v_Nbre_Max_Chaque_Shift[v_v_Solution_Init[p][j]]) {
-                    v_v_Solution_Init[p][j] = -1; 
-				}
-            } 
-        }
     }
 }
