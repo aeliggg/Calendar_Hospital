@@ -79,6 +79,8 @@ class Instance
     bool is_Available_Personne_Jour(int i_Id_Personne, int i_Id_Jour) ;
 
 	vector<vector<int>> ajout_conges_personne(vector<vector<int>> v_v_Solution_Init);
+    vector<vector<int>> suppression_jours_WE_de_trop(vector<vector<int>> v_v_Solution_Init);
+    vector<vector<int>> suppression_shifts_par_type_de_trop(vector<vector<int>> v_v_Solution_Init);
 
 
 };

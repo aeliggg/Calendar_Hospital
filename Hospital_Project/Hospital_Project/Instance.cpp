@@ -830,3 +830,38 @@ vector<vector<int>> Instance::ajout_conges_personne(vector<vector<int>> v_v_Solu
         }
 	}
 }
+
+vector<vector<int>> Instance::suppression_jours_WE_de_trop(vector<vector<int>> v_v_Solution_Init) {
+    for (int p = 0; p < i_Nombre_Personne; p++) {
+        int compteur_WE = 0;
+        for (int j = 0; j < i_Nombre_Jour; j++) {
+            if ((j % 7 == 5) || (j % 7 == 6)) { 
+                if (v_v_Solution_Init[p][j] != -1) { 
+                    compteur_WE++;
+                    if (compteur_WE > v_Personne[p].i_Nbre_WE_Max) {
+                        v_v_Solution_Init[p][j] = -1; 
+                    }
+                }
+            }
+		}
+    }
+}
+
+vector<vector<int>> Instance::suppression_shifts_par_type_de_trop(vector<vector<int>> v_v_Solution_Init) {
+    for (int p = 0; p < i_Nombre_Personne; p++) {
+        vector<int> compteur_shifts = {};
+        for (int i = 0; i < i_Nombre_Shift; i++) {
+            compteur_shifts.push_back(0); 
+		}
+
+        for (int j = 0; j < i_Nombre_Jour; j++) {
+			int shift_actuel = v_v_Solution_Init[p][j];
+            if (shift_actuel!= -1) {
+				compteur_shifts[shift_actuel]++;
+                if (compteur_shifts[shift_actuel] > v_Personne[p].v_Nbre_Max_Chaque_Shift[v_v_Solution_Init[p][j]]) {
+                    v_v_Solution_Init[p][j] = -1; 
+				}
+            } 
+        }
+    }
+}
