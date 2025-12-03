@@ -238,13 +238,16 @@ void Solution::Shift_succede(Instance inst){
                 for (int iIndexJour=1;iIndexJour<iNbJour;iIndexJour++){
                     int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
                     int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
-                    if (!inst.is_possible_Shift_Succede(curr, prev)) {
-                        while(inst.is_possible_Shift_Succede(curr,prev)==false){
-                            if (curr>=inst.get_Nombre_Shift()){
+                    if (prev==-1 || curr==-1){
+                        continue;
+					}
+                    if (!inst.is_possible_Shift_Succede(prev, curr)) {
+                        while(inst.is_possible_Shift_Succede(prev, curr)==false){
+                            if (curr>=iNbJour){
                                 cout<<"Erreur : pas de solution possible avec les contraintes de succession de shift."<<endl;
                                 return;
                             }
-                            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = rand() % inst.get_Nombre_Shift() -1;
+                            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = rand() % inst.get_Nombre_Shift();
                             curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
                         }
                         
