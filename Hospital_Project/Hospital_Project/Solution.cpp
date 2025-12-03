@@ -175,11 +175,11 @@ bool Solution::Verification_Solution(Instance *instance)
 }
 
 void Solution::creation_Solution_Sans_Contrainte(Instance inst) {
-    int iShiftAFaire=0;
-    for (int iIndexPersonne=0;iIndexPersonne<inst.get_Nombre_Personne();iIndexPersonne++){
-        for (int iIndexJour=0;iIndexJour<inst.get_Nombre_Jour();iIndexJour++){
-            iShiftAFaire=rand()%inst.get_Nombre_Shift();
-            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour]=iShiftAFaire;
+    int iShiftAFaire = 0;
+    for (int iIndexPersonne = 0; iIndexPersonne < inst.get_Nombre_Personne(); iIndexPersonne++) {
+        for (int iIndexJour = 0; iIndexJour < inst.get_Nombre_Jour(); iIndexJour++) {
+            iShiftAFaire = rand() % inst.get_Nombre_Shift();
+            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = iShiftAFaire;
         }
     }
 }
@@ -190,32 +190,26 @@ void Solution::ajout_conges_personne(Instance inst) {
     for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
         for (int j = 0; j < inst.get_Personne(p).v_Id_Jour_Conges.size(); j++) {
             int day_off = inst.get_Personne(p).v_Id_Jour_Conges[j];
-            v_v_IdShift_Par_Personne_et_Jour[p][day_off] = -1; 
+            v_v_IdShift_Par_Personne_et_Jour[p][day_off] = -1;
         }
-	}
+    }
 }
 
 void Solution::suppression_jours_WE_de_trop(Instance inst) {
     for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
         int compteur_WE = 0;
         for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
-            if (j % 7 == 5) { 
-                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
-                    compteur_WE++;
-                    if (compteur_WE > inst.get_Personne(p).i_Nbre_WE_Max) {
-                        v_v_IdShift_Par_Personne_et_Jour[p][j] = -1; 
-                    }
-                }
-            }
-            else if (j % 7 == 6) {
-                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1 ) {
+            if (j % 7 == 6) {
+                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1 || v_v_IdShift_Par_Personne_et_Jour[p][j - 1] != -1) {
                     compteur_WE++;
                     if (compteur_WE > inst.get_Personne(p).i_Nbre_WE_Max) {
                         v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
+                        v_v_IdShift_Par_Personne_et_Jour[p][j - 1] = -1;
+
                     }
                 }
             }
-		}
+        }
     }
 }
 
@@ -232,7 +226,7 @@ void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
                 compteur_shifts[shift_actuel]++;
                 if (compteur_shifts[shift_actuel] > inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[v_v_IdShift_Par_Personne_et_Jour[p][j]]) {
                     int shift_aleatoire = rand() % inst.get_Nombre_Shift();
-                    while (shift_aleatoire != shift_actuel && compteur_shifts[shift_aleatoire] < inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[shift_aleatoire]) {
+                    while (shift_aleatoire == shift_actuel || compteur_shifts[shift_aleatoire] > inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[shift_aleatoire]) {
                         shift_aleatoire = rand() % inst.get_Nombre_Shift();
                     }
                     v_v_IdShift_Par_Personne_et_Jour[p][j] = shift_aleatoire;
@@ -244,33 +238,33 @@ void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
 }
 
 
-void Solution::Shift_succede(Instance inst){
-            size_t iNbPersonne=inst.get_Nombre_Personne();
-            size_t iNbJour=inst.get_Nombre_Jour();
-            for (int iIndexPersonne=0;iIndexPersonne<iNbPersonne;iIndexPersonne++){
-                for (int iIndexJour=1;iIndexJour<iNbJour;iIndexJour++){
-                    int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
-                    int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
-                    if (prev==-1 || curr==-1){
-                        continue;
-					}
-                    if (!inst.is_possible_Shift_Succede(prev, curr)) {
-                        while(inst.is_possible_Shift_Succede(prev, curr)==false){
-                            if (curr>=iNbJour){
-                                cout<<"Erreur : pas de solution possible avec les contraintes de succession de shift."<<endl;
-                                return;
-                            }
-                            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = rand() % inst.get_Nombre_Shift();
-                            curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
-                        }
-                        
+void Solution::Shift_succede(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+        for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
+            int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
+            int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
+            if (prev == -1 || curr == -1) {
+                continue;
+            }
+            if (!inst.is_possible_Shift_Succede(prev, curr)) {
+                while (inst.is_possible_Shift_Succede(prev, curr) == false) {
+                    if (curr >= iNbJour) {
+                        cout << "Erreur : pas de solution possible avec les contraintes de succession de shift." << endl;
+                        return;
                     }
-                    else{
-                        v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour]=curr;
+                    v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = rand() % inst.get_Nombre_Shift();
+                    curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
                 }
+
+            }
+            else {
+                v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = curr;
             }
         }
-    }     
+    }
+}
 
 
 void Solution::afficher_solution()
@@ -297,7 +291,7 @@ vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     this->creation_Solution_Sans_Contrainte(inst);
     this->ajout_conges_personne(inst);
     this->suppression_jours_WE_de_trop(inst);
-    this->suppression_shifts_par_type_de_trop(inst);
     this->Shift_succede(inst);
+    this->suppression_shifts_par_type_de_trop(inst);
     return v_v_IdShift_Par_Personne_et_Jour;
 }
