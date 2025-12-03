@@ -53,6 +53,7 @@ int main(int argc, const char * argv[])
                     cout<<" Je te donne juste la solution initiale que j'ai trouvée" <<endl;
 					Solution solution_initiale;
                     vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(*instance);
+                    solution_initiale.afficher_solution();
                     chrono_end = chrono::system_clock::now();
                     elapsed=chrono_end-chrono_start;
                     fichier_Sortie<<s_chemin <<"\t"<<elapsed.count()<<"\t"<< i_best_solution_score <<endl;

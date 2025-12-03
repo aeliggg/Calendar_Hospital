@@ -223,7 +223,7 @@ void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
             if (shift_actuel!= -1) {
 				compteur_shifts[shift_actuel]++;
                 if (compteur_shifts[shift_actuel] > inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[v_v_IdShift_Par_Personne_et_Jour[p][j]]) {
-                    v_v_IdShift_Par_Personne_et_Jour[p][j] = -1; 
+                    v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
 				}
             } 
         }
@@ -258,6 +258,23 @@ void Solution::Shift_succede(Instance inst){
             }
         }
     }     
+
+
+void Solution::afficher_solution()
+{
+    cout << "\n=== Solution générée ===\n";
+
+    for (size_t p = 0; p < v_v_IdShift_Par_Personne_et_Jour.size(); p++)
+    {
+        cout << "Personne " << p << " : ";
+        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[p].size(); j++)
+        {
+            cout << v_v_IdShift_Par_Personne_et_Jour[p][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
 
 vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     v_v_IdShift_Par_Personne_et_Jour.assign(
