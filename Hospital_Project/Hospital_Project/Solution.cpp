@@ -199,11 +199,19 @@ void Solution::suppression_jours_WE_de_trop(Instance inst) {
     for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
         int compteur_WE = 0;
         for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
-            if ((j % 7 == 5) || (j % 7 == 6)) { 
-                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) { 
+            if (j % 7 == 5) { 
+                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
                     compteur_WE++;
                     if (compteur_WE > inst.get_Personne(p).i_Nbre_WE_Max) {
                         v_v_IdShift_Par_Personne_et_Jour[p][j] = -1; 
+                    }
+                }
+            }
+            else if (j % 7 == 6) {
+                if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1 ) {
+                    compteur_WE++;
+                    if (compteur_WE > inst.get_Personne(p).i_Nbre_WE_Max) {
+                        v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
                     }
                 }
             }
@@ -215,17 +223,22 @@ void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
     for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
         vector<int> compteur_shifts = {};
         for (int i = 0; i < inst.get_Nombre_Shift(); i++) {
-            compteur_shifts.push_back(0); 
-		}
+            compteur_shifts.push_back(0);
+        }
 
         for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
-			int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[p][j];
-            if (shift_actuel!= -1) {
-				compteur_shifts[shift_actuel]++;
+            int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[p][j];
+            if (shift_actuel != -1) {
+                compteur_shifts[shift_actuel]++;
                 if (compteur_shifts[shift_actuel] > inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[v_v_IdShift_Par_Personne_et_Jour[p][j]]) {
-                    v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
-				}
-            } 
+                    int shift_aleatoire = rand() % inst.get_Nombre_Shift();
+                    while (shift_aleatoire != shift_actuel && compteur_shifts[shift_aleatoire] < inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[shift_aleatoire]) {
+                        shift_aleatoire = rand() % inst.get_Nombre_Shift();
+                    }
+                    v_v_IdShift_Par_Personne_et_Jour[p][j] = shift_aleatoire;
+                    compteur_shifts[shift_aleatoire]++;
+                }
+            }
         }
     }
 }

@@ -12,3 +12,12 @@
 ./Data/Inst8.txt	0.0319605	4631
  Fichier données	 Tps de résolution 	 Best solution
 ./Data/Inst8.txt	0.207716	4631
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.388131	4631
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.234466	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.420999	4631
