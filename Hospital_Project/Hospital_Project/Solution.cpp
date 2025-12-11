@@ -266,6 +266,41 @@ void Solution::Shift_succede(Instance inst) {
     }
 }
 
+//Logique à améliorer
+void Solution::maximum_min_per_personne(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+	for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+		int duree_travail = 0;
+        int shift_aleatoire;
+        int duree_shift_actuel = 0;
+        int compteur_boucle = 0;
+		for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+			int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
+			if (shift_actuel != -1) {
+				duree_travail += inst.get_Shift_Duree(shift_actuel);
+               
+			}
+		}
+		if (duree_travail > inst.get_Personne_Duree_total_Max(iIndexPersonne)) {
+            while (duree_travail > inst.get_Personne_Duree_total_Max(iIndexPersonne)) {
+                shift_aleatoire = rand() % inst.get_Nombre_Jour();
+                while(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][shift_aleatoire] == -1){
+                    compteur_boucle++;
+                    shift_aleatoire = rand() % inst.get_Nombre_Jour();
+					if (compteur_boucle > 1000) {
+						cout << "Erreur : pas de solution possible avec les contraintes de durée maximale de travail par personne." << endl;
+						return;
+					}
+				}
+                duree_shift_actuel = inst.get_Shift_Duree(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][shift_aleatoire]);
+                v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][shift_aleatoire] = -1;
+                duree_travail -= duree_shift_actuel;
+            }
+		}
+	}
+}
+
 
 void Solution::afficher_solution()
 {
@@ -293,5 +328,6 @@ vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     this->suppression_jours_WE_de_trop(inst);
     this->Shift_succede(inst);
     this->suppression_shifts_par_type_de_trop(inst);
+    this->maximum_min_per_personne(inst);
     return v_v_IdShift_Par_Personne_et_Jour;
 }
