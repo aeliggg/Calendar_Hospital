@@ -28,6 +28,7 @@ class Solution
     void suppression_jours_WE_de_trop(Instance inst);
     void suppression_shifts_par_type_de_trop(Instance inst);
     void maximum_min_per_personne(Instance inst);
+    void suppression_max_shifts_consecutifs(Instance inst);
     vector<vector<int>> creation_Solution_Initiale(Instance inst);
     void afficher_solution();
 
