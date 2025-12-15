@@ -282,22 +282,21 @@ void Solution::Shift_succede(Instance inst) {
         for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
             int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
             int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
-            if (prev == -1 || curr == -1) {
+            if (prev == -1 || curr == -1 || inst.is_possible_Shift_Succede(prev,curr)) {
                 continue;
             }
-			int iShiftCurr = 0;
-            while (inst.is_possible_Shift_Succede(prev, curr) == false ) {
-                if (iShiftCurr < inst.get_Nombre_Shift()-1) {
-                    iShiftCurr++;
-                    curr = iShiftCurr;
-					this->suppression_shifts_par_type_de_trop(inst);
-                }
-                else {
-					curr = -1;
-					break;
-                }
-              
+			curr = 0;
+			int compteur = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin(), v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].end(), curr);
+            while ((inst.is_possible_Shift_Succede(prev, curr) == false || compteur >= inst.get_Personne_Shift_Nbre_Max(iIndexPersonne,curr))&& curr < inst.get_Nombre_Shift()-1 ) {
+                curr++;
+				compteur = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin(), v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].end(), curr);              
             }
+
+            if (curr == inst.get_Nombre_Shift() -1 && (inst.is_possible_Shift_Succede(prev, curr) == false || compteur >= inst.get_Personne_Shift_Nbre_Max(iIndexPersonne, curr))) {
+                curr = -1; 
+			}
+
+			cout << "Personne " << iIndexPersonne << ", jour " << iIndexJour << ": changement de shift de " << v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] << " à " << curr << "\n";
             v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = curr;
         }
     }
@@ -633,8 +632,8 @@ vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     this->creation_Solution_Sans_Contrainte(inst);
     this->ajout_conges_personne(inst);
     this->suppression_jours_WE_de_trop(inst);
-    this->Shift_succede(inst);
     this->suppression_shifts_par_type_de_trop(inst);
+    this->Shift_succede(inst);
     this->suppression_max_shifts_consecutifs(inst);
 	this->maximum_min_per_personne(inst);   
 	this->ajout_jours_de_repos_consecutif(inst);
