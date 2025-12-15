@@ -50,7 +50,6 @@ int main(int argc, const char * argv[])
                     chrono_start = chrono::system_clock::now();
                     i_best_solution_score=Resolution(instance);
                     cout<< " Fin de résolution de "<<s_tmp<<endl;
-                    cout<<" Je te donne juste la solution initiale que j'ai trouvée" <<endl;
 					Solution solution_initiale;
                     vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(*instance);
                     solution_initiale.afficher_solution();
