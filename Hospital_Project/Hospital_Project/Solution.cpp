@@ -271,7 +271,7 @@ void Solution::Shift_succede(Instance inst) {
     size_t iNbPersonne = inst.get_Nombre_Personne();
     size_t iNbJour = inst.get_Nombre_Jour();
     for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
-        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+        for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
             int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
             int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
             if (prev == -1 || curr == -1) {
@@ -431,7 +431,7 @@ bool Solution::check_shift_succede(Instance inst) {
 	size_t iNbPersonne = inst.get_Nombre_Personne();
 	size_t iNbJour = inst.get_Nombre_Jour();
     for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
-		for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+		for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
 			int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
 			int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
 			if (prev == -1 || curr == -1) {
@@ -543,7 +543,48 @@ int Solution::check_solution(Instance inst) {
     else {
 		cout << "Max assignable shifts NOT OK\n";
     }
-    return check_conges(inst) && check_min_consecutif_shifts(inst) && check_min_minutes_travailees(inst) && check_max_assignable_shifts(inst);
+
+    if (this->check_max_we(inst) == true) {
+        cout << "Max WE OK\n";
+        i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Max WE NOT OK\n";
+	}
+
+    if(this->check_min_repos_consecutif(inst)==true){
+        cout << "Min repos consecutif OK\n";
+		i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Min repos consecutif NOT OK\n";
+    }
+
+    if (this->check_max_shift_consecutif(inst) == true) {
+        cout << "Max shift consecutif OK\n";
+		i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Max shift consecutif NOT OK\n";
+    }
+
+    if (this->check_max_minutes_per_personne(inst) == true) {
+        cout << "Max minutes par personne OK\n";
+		i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Max minutes par personne NOT OK\n";
+    }
+
+    if (this->check_shift_succede(inst) == true) {
+        cout << "Shift succede OK\n";
+		i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Shift succede NOT OK\n";
+	}
+
+	return i_Nb_Contrainte_Respectees;
 }
 
 
@@ -558,6 +599,8 @@ vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     this->Shift_succede(inst);
     this->suppression_shifts_par_type_de_trop(inst);
     this->suppression_max_shifts_consecutifs(inst);
+	int i_Nb_Contraintes_Respectees = this->check_solution(inst);
+	cout << "Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 9\n";
     return v_v_IdShift_Par_Personne_et_Jour;
 }
 
