@@ -29,6 +29,11 @@ class Solution
     void suppression_shifts_par_type_de_trop(Instance inst);
     void maximum_min_per_personne(Instance inst);
     void suppression_max_shifts_consecutifs(Instance inst);
+    bool check_max_we(Instance inst);
+    bool check_min_repos_consecutif(Instance inst);
+    bool check_max_shift_consecutif(Instance inst);
+	bool check_max_minutes_per_personne(Instance inst);
+	bool check_shift_succede(Instance inst);
     vector<vector<int>> creation_Solution_Initiale(Instance inst);
     void afficher_solution();
 

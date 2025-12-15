@@ -271,7 +271,7 @@ void Solution::Shift_succede(Instance inst) {
     size_t iNbPersonne = inst.get_Nombre_Personne();
     size_t iNbJour = inst.get_Nombre_Jour();
     for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
-        for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
+        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
             int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
             int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
             if (prev == -1 || curr == -1) {
@@ -346,6 +346,104 @@ void Solution::maximum_min_per_personne(Instance inst) {
     }
 }
 
+bool Solution::check_max_we(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+		int max_we = inst.get_Personne_Nbre_WE_Max(iIndexPersonne);
+        int compteur_we = 0;
+        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+			if (iIndexJour % 7 == 5) {
+				if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] != -1 || v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour + 1] != -1) {
+					compteur_we += 1;
+				}
+				if (compteur_we > max_we) {
+					return false;
+				}
+			}
+        }
+    }
+	return true;
+}
+
+bool Solution::check_min_repos_consecutif(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+        int min_repos = inst.get_Personne_Jour_OFF_Consecutif_Min(iIndexPersonne);
+        int compteur_repos = 0;
+        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+            if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] == -1) {
+                compteur_repos += 1;
+            }
+			else if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] != -1) {
+				if (compteur_repos > 0 && compteur_repos < min_repos) {
+					return false;
+				}
+				compteur_repos = 0;
+			}
+
+        }
+    }
+	return true;
+}
+
+bool Solution::check_max_shift_consecutif(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+        int compteur_consecutif = 0;
+		int max_shift_consecutif = inst.get_Personne_Nbre_Shift_Consecutif_Max(iIndexPersonne);
+        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+            if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] != -1) {
+				compteur_consecutif += 1;
+            }
+            else if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] == -1) {
+                compteur_consecutif = 0;
+            }
+            if (compteur_consecutif > max_shift_consecutif) {
+                return false;
+            }
+        }
+    }
+	return true;
+}
+
+bool Solution::check_max_minutes_per_personne(Instance inst) {
+    size_t iNbPersonne = inst.get_Nombre_Personne();
+    size_t iNbJour = inst.get_Nombre_Jour();
+    int compteur_minute = 0;
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+		int nbMaxMinutes = inst.get_Personne_Duree_total_Max(iIndexPersonne);
+        for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+            if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] != -1) {
+                compteur_minute += inst.get_Shift_Duree(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour]);
+            }
+			if (compteur_minute > nbMaxMinutes) {
+				return false;
+			}
+        }
+    }
+	return true;
+}
+
+bool Solution::check_shift_succede(Instance inst) {
+	size_t iNbPersonne = inst.get_Nombre_Personne();
+	size_t iNbJour = inst.get_Nombre_Jour();
+    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+		for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+			int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
+			int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
+			if (prev == -1 || curr == -1) {
+				continue;
+			}
+			if (!inst.is_possible_Shift_Succede(prev, curr)) {
+				return false;
+			}
+		}
+    }
+	return true;
+}
 
 vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     v_v_IdShift_Par_Personne_et_Jour.assign(
