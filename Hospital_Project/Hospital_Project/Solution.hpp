@@ -30,6 +30,11 @@ class Solution
     void maximum_min_per_personne(Instance inst);
     void suppression_max_shifts_consecutifs(Instance inst);
     vector<vector<int>> creation_Solution_Initiale(Instance inst);
+    bool check_conges(Instance inst);
+    bool check_min_consecutif_shifts(Instance inst);
+	bool check_min_minutes_travailees(Instance inst);
+	bool check_max_assignable_shifts(Instance inst);
+	int check_solution(Instance inst);
     void afficher_solution();
 
 };

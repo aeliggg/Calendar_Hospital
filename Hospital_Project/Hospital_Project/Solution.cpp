@@ -346,6 +346,108 @@ void Solution::maximum_min_per_personne(Instance inst) {
     }
 }
 
+bool Solution::check_conges(Instance inst) {
+    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
+        for (int j = 0; j < inst.get_Personne(p).v_Id_Jour_Conges.size(); j++) {
+            int day_off = inst.get_Personne(p).v_Id_Jour_Conges[j];
+            if (v_v_IdShift_Par_Personne_et_Jour[p][day_off] != -1) {
+                return false;
+            }
+        }
+    }
+	return true;
+}
+
+
+bool Solution::check_min_consecutif_shifts(Instance inst) {
+    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
+        int compteur_consecutif = 0;
+        for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
+            if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
+                compteur_consecutif++;
+            }
+            else {
+                if (compteur_consecutif > 0 && compteur_consecutif < inst.get_Personne_Nbre_Shift_Consecutif_Min(p)) {
+                    return false;
+                }
+                compteur_consecutif = 0;
+            }
+        }
+        if (compteur_consecutif > 0 && compteur_consecutif < inst.get_Personne_Nbre_Shift_Consecutif_Min(p)) {
+            return false;
+        }
+	}
+    return true;
+}
+
+bool Solution::check_min_minutes_travailees(Instance inst) {
+    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
+        int duree_travail = 0;
+        for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
+            int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[p][j];
+            if (shift_actuel != -1) {
+                duree_travail += inst.get_Shift_Duree(shift_actuel);
+            }
+        }
+        if (duree_travail < inst.get_Personne_Duree_total_Min(p)) {
+            return false;
+        }
+	}
+    return true;
+}
+
+
+bool Solution::check_max_assignable_shifts(Instance inst){
+    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
+        vector<int> compteur_shifts(inst.get_Nombre_Shift(), 0);
+        for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
+            int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[p][j];
+            if (shift_actuel != -1) {
+                compteur_shifts[shift_actuel]++;
+                if (compteur_shifts[shift_actuel] > inst.get_Personne_Shift_Nbre_Max(p, shift_actuel)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+int Solution::check_solution(Instance inst) {
+	int i_Nb_Contrainte_Respectees = 1;
+    if (this->check_conges(inst)==true){
+        cout << "Conge OK\n";
+        i_Nb_Contrainte_Respectees++;
+    } else {
+        cout << "Conge NOT OK\n";
+	}
+
+    if (this->check_min_consecutif_shifts(inst)==true){
+        cout << "Min consecutif shifts OK\n";
+        i_Nb_Contrainte_Respectees++;
+    }
+    else {
+        cout << "Min consecutif shifts NOT OK\n";
+    }
+
+    if( this->check_min_minutes_travailees(inst)==true){
+        cout << "Min minutes travaillees OK\n";
+        i_Nb_Contrainte_Respectees++;
+	}
+    else {
+        cout << "Min minutes travaillees NOT OK\n";
+    }
+
+    if (this->check_max_assignable_shifts(inst) == true) {
+        cout << "Max assignable shifts OK\n";
+        i_Nb_Contrainte_Respectees++;
+    }
+    else {
+		cout << "Max assignable shifts NOT OK\n";
+    }
+    return check_conges(inst) && check_min_consecutif_shifts(inst) && check_min_minutes_travailees(inst) && check_max_assignable_shifts(inst);
+}
+
 
 vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     v_v_IdShift_Par_Personne_et_Jour.assign(
