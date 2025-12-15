@@ -70,3 +70,41 @@
 ./Data/Inst8.txt	0.138731	4631
  Fichier données	 Tps de résolution 	 Best solution
 ./Data/Inst8.txt	0.118078	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.130356	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.115843	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.119385	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.126001	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.158172	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.127152	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.214384	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.20204	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.177377	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.178476	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.169538	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.254338	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.215207	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.165411	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.162297	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.216401	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.168546	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.156427	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.118531	4631
