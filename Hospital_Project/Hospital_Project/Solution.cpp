@@ -284,20 +284,19 @@ void Solution::Shift_succede(Instance inst) {
             if (prev == -1 || curr == -1) {
                 continue;
             }
-            if (!inst.is_possible_Shift_Succede(prev, curr)) {
-                while (inst.is_possible_Shift_Succede(prev, curr) == false) {
-                    if (curr >= iNbJour) {
-                        cout << "Erreur : pas de solution possible avec les contraintes de succession de shift." << endl;
-                        return;
-                    }
-                    v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = rand() % inst.get_Nombre_Shift();
-                    curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
+			int iShiftCurr = 0;
+            while (inst.is_possible_Shift_Succede(prev, curr) == false || check_max_assignable_shifts(inst)==false) {
+                if (iShiftCurr < inst.get_Nombre_Shift()-1) {
+                    iShiftCurr++;
+                    curr = iShiftCurr;
                 }
-
+                else {
+					curr = -1;
+					break;
+                }
+              
             }
-            else {
-                v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = curr;
-            }
+            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = curr;
         }
     }
 }
@@ -445,6 +444,7 @@ bool Solution::check_shift_succede(Instance inst) {
 				continue;
 			}
 			if (!inst.is_possible_Shift_Succede(prev, curr)) {
+				printf("Personne %d, jour %d: shift %d ne peut pas succéder à shift %d\n", iIndexPersonne, iIndexJour, curr, prev);
 				return false;
 			}
 		}
@@ -512,7 +512,6 @@ bool Solution::check_max_assignable_shifts(Instance inst){
             if (shift_actuel != -1) {
                 compteur_shifts[shift_actuel]++;
                 if (compteur_shifts[shift_actuel] > inst.get_Personne_Shift_Nbre_Max(p, shift_actuel)) {
-					cout << "Personne " << p << " shift " << shift_actuel << " jour " << j << " compteur_shifts " << compteur_shifts[shift_actuel] << "\n";
                     return false;
                 }
             }
