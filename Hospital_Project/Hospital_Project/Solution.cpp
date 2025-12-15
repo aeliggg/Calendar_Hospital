@@ -349,6 +349,34 @@ void Solution::maximum_min_per_personne(Instance inst) {
     }
 }
 
+void Solution::ajout_jours_de_repos_consecutif(Instance inst) {
+	size_t iNbPersonne = inst.get_Nombre_Personne();
+	size_t iNbJour = inst.get_Nombre_Jour();
+	for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
+		int min_repos = inst.get_Personne_Jour_OFF_Consecutif_Min(iIndexPersonne);
+		for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
+			if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] == -1) {
+				int compteur_repos = 1;
+				for (int j = iIndexJour + 1; j < iNbJour-1; j++) {
+					if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][j] == -1) {
+						compteur_repos += 1;
+					}
+					else {
+						break;
+					}
+				}
+				if (compteur_repos < min_repos) {
+					for (int k = iIndexJour + compteur_repos; k < iIndexJour + min_repos; k++) {
+						if (k < iNbJour) {
+							v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
+						}
+					}
+				}
+				iIndexJour += compteur_repos - 1;
+			}
+		}
+	}
+}
 bool Solution::check_max_we(Instance inst) {
     size_t iNbPersonne = inst.get_Nombre_Personne();
     size_t iNbJour = inst.get_Nombre_Jour();
@@ -606,7 +634,8 @@ vector<vector<int>> Solution::creation_Solution_Initiale(Instance inst) {
     this->Shift_succede(inst);
     this->suppression_shifts_par_type_de_trop(inst);
     this->suppression_max_shifts_consecutifs(inst);
-	this->maximum_min_per_personne(inst);
+	this->maximum_min_per_personne(inst);   
+	this->ajout_jours_de_repos_consecutif(inst);
 	int i_Nb_Contraintes_Respectees = this->check_solution(inst);
 	cout << "Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 10\n";
     return v_v_IdShift_Par_Personne_et_Jour;
