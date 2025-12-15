@@ -30,6 +30,7 @@ class Solution
     void maximum_min_per_personne(Instance inst);
     void suppression_max_shifts_consecutifs(Instance inst);
 	void ajout_jours_de_repos_consecutif(Instance inst);
+    void corriger_succession_et_max_shifts(Instance inst);
     vector<vector<int>> creation_Solution_Initiale(Instance inst);
     bool check_max_we(Instance inst);
     bool check_min_repos_consecutif(Instance inst);

@@ -227,6 +227,22 @@ void Solution::suppression_jours_WE_de_trop(Instance inst) {
     }
 }
 
+void Solution::suppression_max_shifts_consecutifs(Instance inst) {
+    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
+        int compteur_consecutif = 0;
+        for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
+            if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
+                compteur_consecutif++;
+                if (compteur_consecutif > inst.get_Personne(p).i_Nbre_Shift_Consecutif_Max) {
+                    v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
+                    compteur_consecutif = 0;
+                }
+            }
+        }
+    }
+}
+
+
 void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
     for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
         vector<int> compteur_shifts = {};
@@ -240,33 +256,18 @@ void Solution::suppression_shifts_par_type_de_trop(Instance inst) {
                 compteur_shifts[shift_actuel]++;
                 if (compteur_shifts[shift_actuel] > inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[v_v_IdShift_Par_Personne_et_Jour[p][j]]) {
                     int shift_aleatoire = rand() % inst.get_Nombre_Shift();
-					int i_compteur_boucle = 0;
+                    int i_compteur_boucle = 0;
                     while (shift_aleatoire == shift_actuel || compteur_shifts[shift_aleatoire] >= inst.get_Personne(p).v_Nbre_Max_Chaque_Shift[shift_aleatoire]) {
                         shift_aleatoire = rand() % inst.get_Nombre_Shift();
-						i_compteur_boucle++;
+                        i_compteur_boucle++;
                         if (i_compteur_boucle > 1000) {
                             shift_aleatoire = -1;
-							break;
+                            break;
                         }
                     }
                     v_v_IdShift_Par_Personne_et_Jour[p][j] = shift_aleatoire;
                     compteur_shifts[shift_aleatoire]++;
-					compteur_shifts[shift_actuel]--;
-                }
-            }
-        }
-    }
-}
-
-void Solution::suppression_max_shifts_consecutifs(Instance inst) {
-    for (int p = 0; p < inst.get_Nombre_Personne(); p++) {
-        int compteur_consecutif = 0;
-        for (int j = 0; j < inst.get_Nombre_Jour(); j++) {
-            if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
-                compteur_consecutif++;
-                if (compteur_consecutif > inst.get_Personne(p).i_Nbre_Shift_Consecutif_Max) {
-                    v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
-                    compteur_consecutif = 0;
+                    compteur_shifts[shift_actuel]--;
                 }
             }
         }
@@ -289,6 +290,7 @@ void Solution::Shift_succede(Instance inst) {
                 if (iShiftCurr < inst.get_Nombre_Shift()-1) {
                     iShiftCurr++;
                     curr = iShiftCurr;
+					this->suppression_shifts_par_type_de_trop(inst);
                 }
                 else {
 					curr = -1;
