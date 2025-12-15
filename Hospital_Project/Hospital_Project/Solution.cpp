@@ -285,7 +285,7 @@ void Solution::Shift_succede(Instance inst) {
                 continue;
             }
 			int iShiftCurr = 0;
-            while (inst.is_possible_Shift_Succede(prev, curr) == false || check_max_assignable_shifts(inst)==false) {
+            while (inst.is_possible_Shift_Succede(prev, curr) == false ) {
                 if (iShiftCurr < inst.get_Nombre_Shift()-1) {
                     iShiftCurr++;
                     curr = iShiftCurr;
