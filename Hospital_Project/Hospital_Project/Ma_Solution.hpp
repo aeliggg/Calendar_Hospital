@@ -35,7 +35,8 @@ public:
 
     // Métaheuristique
     void MetaHeuristique_Recherche_Local(Instance* inst);
-    vector<vector<int>> Genere_Voisin(Instance* inst);
+    bool Verifie_Neuf_Contraintes(Instance* inst, int ligne_a_verifier);
+    vector<int> Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,int ligne_a_modifier);
 
     // Méthodes de vérification
     bool check_max_we(Instance* inst);

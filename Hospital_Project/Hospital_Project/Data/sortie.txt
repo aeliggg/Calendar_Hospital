@@ -302,3 +302,36 @@
 ./Data/Inst2.txt	0.0020099	4631
  Fichier données	 Tps de résolution 	 Best solution
 ./Data/Inst3.txt	0.0287883	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst4.txt	0.0350035	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst5.txt	0.0374308	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst6.txt	0.0647892	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst7.txt	0.0714272	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst9.txt	0.131423	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst10.txt	0.293849	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst11.txt	0.0982475	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst12.txt	0.133751	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst13.txt	0.0801148	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst14.txt	0.11457	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst15.txt	0.244209	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst16.txt	1.10124	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst17.txt	1.36293	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst18.txt	4.83963	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	0.0595557	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	9.65254	4631
+ Fichier données	 Tps de résolution 	 Best solution
