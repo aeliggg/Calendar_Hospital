@@ -1,15 +1,10 @@
 #include "Ma_Solution.hpp"
-#include <iostream>
-#include <set>
 #include <cstdlib>
+#include <cstdio>
 
-Ma_Solution::Ma_Solution()
-{
-}
-
-Ma_Solution::~Ma_Solution()
-{
-}
+// Constructeurs et destructeur
+Ma_Solution::Ma_Solution() {}
+Ma_Solution::~Ma_Solution() {}
 
 void Ma_Solution::creation_Solution_Sans_Contrainte(Instance* inst) {
     int iShiftAFaire = 0;
@@ -23,9 +18,9 @@ void Ma_Solution::creation_Solution_Sans_Contrainte(Instance* inst) {
 
 void Ma_Solution::ajout_conges_personne(Instance* inst) {
     for (int p = 0; p < inst->get_Nombre_Personne(); p++) {
-        vector<int> v_conges = inst->get_vector_Personne_Id_Jour_Conges(p);
-        for (int j = 0; j < v_conges.size(); j++) {
-            int day_off = v_conges[j];
+        vector<int> conges = inst->get_vector_Personne_Id_Jour_Conges(p);
+        for (int j = 0; j < conges.size(); j++) {
+            int day_off = conges[j];
             v_v_IdShift_Par_Personne_et_Jour[p][day_off] = -1;
         }
     }
@@ -61,10 +56,11 @@ void Ma_Solution::suppression_jours_WE_de_trop(Instance* inst) {
 void Ma_Solution::suppression_max_shifts_consecutifs(Instance* inst) {
     for (int p = 0; p < inst->get_Nombre_Personne(); p++) {
         int compteur_consecutif = 0;
+        int max_consecutif = inst->get_Personne_Nbre_Shift_Consecutif_Max(p);
         for (int j = 0; j < inst->get_Nombre_Jour(); j++) {
             if (v_v_IdShift_Par_Personne_et_Jour[p][j] != -1) {
                 compteur_consecutif++;
-                if (compteur_consecutif > inst->get_Personne_Nbre_Shift_Consecutif_Max(p)) {
+                if (compteur_consecutif > max_consecutif) {
                     v_v_IdShift_Par_Personne_et_Jour[p][j] = -1;
                     compteur_consecutif = 0;
                 }
@@ -84,7 +80,8 @@ void Ma_Solution::suppression_shifts_par_type_de_trop(Instance* inst) {
             int shift_actuel = v_v_IdShift_Par_Personne_et_Jour[p][j];
             if (shift_actuel != -1) {
                 compteur_shifts[shift_actuel]++;
-                if (compteur_shifts[shift_actuel] > inst->get_Personne_Shift_Nbre_Max(p, v_v_IdShift_Par_Personne_et_Jour[p][j])) {
+                int max_shift = inst->get_Personne_Shift_Nbre_Max(p, shift_actuel);
+                if (compteur_shifts[shift_actuel] > max_shift) {
                     int shift_aleatoire = rand() % inst->get_Nombre_Shift();
                     int i_compteur_boucle = 0;
                     while (shift_aleatoire == shift_actuel || compteur_shifts[shift_aleatoire] >= inst->get_Personne_Shift_Nbre_Max(p, shift_aleatoire)) {
@@ -111,34 +108,30 @@ void Ma_Solution::Shift_succede(Instance* inst) {
         for (int iIndexJour = 1; iIndexJour < iNbJour; iIndexJour++) {
             int prev = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour - 1];
             int curr = v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour];
-            if (prev == -1 || curr == -1) {
+            if (prev == -1 || curr == -1 || inst->is_possible_Shift_Succede(prev, curr)) {
                 continue;
             }
-            int iShiftCurr = 0;
-            while (inst->is_possible_Shift_Succede(prev, curr) == false) {
-                if (iShiftCurr < inst->get_Nombre_Shift() - 1) {
-                    iShiftCurr++;
-                    curr = iShiftCurr;
-                    this->suppression_shifts_par_type_de_trop(inst);
-                }
-                else {
-                    curr = -1;
-                    break;
-                }
+            curr = 0;
+            int compteur = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin(), v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].end(), curr);
+            while ((inst->is_possible_Shift_Succede(prev, curr) == false || compteur >= inst->get_Personne_Shift_Nbre_Max(iIndexPersonne, curr)) && curr < inst->get_Nombre_Shift() - 1) {
+                curr++;
+                compteur = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin(), v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].end(), curr);
             }
+
+            if (curr == inst->get_Nombre_Shift() - 1 && (inst->is_possible_Shift_Succede(prev, curr) == false || compteur >= inst->get_Personne_Shift_Nbre_Max(iIndexPersonne, curr))) {
+                curr = -1;
+            }
+
             v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] = curr;
         }
     }
 }
 
-void Ma_Solution::afficher_solution()
-{
+void Ma_Solution::afficher_solution() {
     cout << "\n=== Solution générée ===\n";
-    for (size_t p = 0; p < v_v_IdShift_Par_Personne_et_Jour.size(); p++)
-    {
+    for (size_t p = 0; p < v_v_IdShift_Par_Personne_et_Jour.size(); p++) {
         cout << "Personne " << p << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[p].size(); j++)
-        {
+        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[p].size(); j++) {
             cout << v_v_IdShift_Par_Personne_et_Jour[p][j] << " ";
         }
         cout << endl;
@@ -185,46 +178,59 @@ void Ma_Solution::ajout_jours_de_repos_consecutif(Instance* inst) {
         for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
             if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour] == -1) {
                 int compteur_repos = 1;
-                for (int j = iIndexJour + 1; j < iNbJour - 1; j++) {
-                    if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][j] == -1) {
-                        compteur_repos += 1;
-                    }
-                    else {
-                        break;
-                    }
+                int j = iIndexJour + 1;
+                while (j < iNbJour && v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][j] == -1) {
+                    compteur_repos += 1;
+                    j++;
                 }
                 if (compteur_repos < min_repos) {
-                    for (int k = iIndexJour + compteur_repos; k < iIndexJour + min_repos; k++) {
-                        if (k < iNbJour) {
+                    int i_reste_a_mettre = min_repos - compteur_repos;
+                    if (0 <= iIndexJour - i_reste_a_mettre && iIndexJour + i_reste_a_mettre <= iNbJour - 1) {
+                        int i_indiceDebut = iIndexJour - i_reste_a_mettre;
+                        int i_indiceFin = iIndexJour + i_reste_a_mettre;
+                        int i_countDayOffBefore = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin() + i_indiceDebut, v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin() + iIndexJour, -1);
+                        int i_countDayOffAfter = std::count(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin() + iIndexJour, v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne].begin() + i_indiceFin, -1);
+                        if (i_countDayOffBefore == 0 && i_indiceDebut > 0 && v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][i_indiceDebut - 1] == -1) {
+                            for (int k = i_indiceDebut; k < iIndexJour; k++) {
+                                v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
+                                iIndexJour = i_indiceDebut;
+                            }
+                        }
+                        else if (i_countDayOffAfter == 0 && i_indiceFin < iNbJour - 1 && v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][i_indiceFin + 1] == -1) {
+                            for (int k = iIndexJour + 1; k <= i_indiceFin; k++) {
+                                v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
+                            }
+                        }
+                        else {
+                            int i_jours_off_mis = 0;
+                            int k = i_indiceDebut;
+                            while (i_jours_off_mis < i_reste_a_mettre && k < iNbJour) {
+                                if (v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] != -1) {
+                                    v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
+                                    i_jours_off_mis++;
+                                }
+                                k++;
+                            }
+                        }
+                    }
+                    else if (0 <= iIndexJour - i_reste_a_mettre) {
+                        int i_indiceDebut = iIndexJour - i_reste_a_mettre;
+                        for (int k = i_indiceDebut; k < iIndexJour; k++) {
+                            v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
+                            iIndexJour = i_indiceDebut;
+                        }
+                    }
+                    else if (iIndexJour + i_reste_a_mettre <= iNbJour - 1) {
+                        int i_indiceFin = iIndexJour + i_reste_a_mettre;
+                        for (int k = iIndexJour + 1; k <= i_indiceFin; k++) {
                             v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][k] = -1;
                         }
                     }
                 }
-                iIndexJour += compteur_repos - 1;
+                iIndexJour += min_repos - 1;
             }
         }
     }
-}
-
-vector<vector<int>> Ma_Solution::Genere_Voisin(Instance* inst) {
-    int iNbPersonne = inst->get_Nombre_Personne();
-    int iNbJour = inst->get_Nombre_Jour();
-    vector<vector<int>> v_v_IdShift_Par_Personne_et_Jour_Voisin = this->v_v_IdShift_Par_Personne_et_Jour;
-    for (int iIndexPersonne = 0; iIndexPersonne < iNbPersonne; iIndexPersonne++) {
-        if (check_ligne_min_consecutif_shifts(inst, iIndexPersonne) == false) {
-            for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
-                int shift_aleatoire = rand() % inst->get_Nombre_Shift();
-                v_v_IdShift_Par_Personne_et_Jour_Voisin[iIndexPersonne][iIndexJour] = shift_aleatoire;
-            }
-        }
-        else if (check_ligne_min_minutes_travailees(inst, iIndexPersonne) == false) {
-            for (int iIndexJour = 0; iIndexJour < iNbJour; iIndexJour++) {
-                int shift_aleatoire = rand() % inst->get_Nombre_Shift();
-                v_v_IdShift_Par_Personne_et_Jour_Voisin[iIndexPersonne][iIndexJour] = shift_aleatoire;
-            }
-        }
-    }
-    return v_v_IdShift_Par_Personne_et_Jour_Voisin;
 }
 
 bool Ma_Solution::check_max_we(Instance* inst) {
@@ -329,9 +335,9 @@ bool Ma_Solution::check_shift_succede(Instance* inst) {
 
 bool Ma_Solution::check_conges(Instance* inst) {
     for (int p = 0; p < inst->get_Nombre_Personne(); p++) {
-        vector<int> v_conges = inst->get_vector_Personne_Id_Jour_Conges(p);
-        for (int j = 0; j < v_conges.size(); j++) {
-            int day_off = v_conges[j];
+        vector<int> conges = inst->get_vector_Personne_Id_Jour_Conges(p);
+        for (int j = 0; j < conges.size(); j++) {
+            int day_off = conges[j];
             if (v_v_IdShift_Par_Personne_et_Jour[p][day_off] != -1) {
                 return false;
             }
@@ -356,7 +362,7 @@ bool Ma_Solution::check_min_consecutif_shifts(Instance* inst) {
             }
         }
         if (compteur_consecutif > 0 && compteur_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(p)) {
-            cout << "Personne " << p << " dernier jour " << " compteur_consecutif " << compteur_consecutif << "\n";
+            cout << "Personne " << p << " dernier jour compteur_consecutif " << compteur_consecutif << "\n";
             return false;
         }
     }
@@ -373,6 +379,7 @@ bool Ma_Solution::check_min_minutes_travailees(Instance* inst) {
             }
         }
         if (duree_travail < inst->get_Personne_Duree_total_Min(p)) {
+            cout << "Personne " << p << " duree_travail " << duree_travail << " minimum : " << inst->get_Personne_Duree_total_Min(p) << "\n";
             return false;
         }
     }
@@ -395,43 +402,9 @@ bool Ma_Solution::check_max_assignable_shifts(Instance* inst) {
     return true;
 }
 
-bool Ma_Solution::check_ligne_min_consecutif_shifts(Instance* inst, int ligne) {
-    int compteur_consecutif = 0;
-    for (int j = 0; j < inst->get_Nombre_Jour(); j++) {
-        if (this->v_v_IdShift_Par_Personne_et_Jour[ligne][j] != -1) {
-            compteur_consecutif++;
-        }
-        else {
-            if (compteur_consecutif > 0 && compteur_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne)) {
-                cout << "Personne " << ligne << " jour " << j << " compteur_consecutif " << compteur_consecutif << "\n";
-                return false;
-            }
-            compteur_consecutif = 0;
-        }
-    }
-    if (compteur_consecutif > 0 && compteur_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne)) {
-        cout << "Personne " << ligne << " dernier jour " << " compteur_consecutif " << compteur_consecutif << "\n";
-        return false;
-    }
-    return true;
-}
-
-bool Ma_Solution::check_ligne_min_minutes_travailees(Instance* inst, int ligne) {
-    int duree_travail = 0;
-    for (int j = 0; j < inst->get_Nombre_Jour(); j++) {
-        int shift_actuel = this->v_v_IdShift_Par_Personne_et_Jour[ligne][j];
-        if (shift_actuel != -1) {
-            duree_travail += inst->get_Shift_Duree(shift_actuel);
-        }
-    }
-    if (duree_travail < inst->get_Personne_Duree_total_Min(ligne)) {
-        return false;
-    }
-    return true;
-}
-
 int Ma_Solution::check_solution(Instance* inst) {
     int i_Nb_Contrainte_Respectees = 1;
+
     if (this->check_conges(inst) == true) {
         cout << "Conge OK\n";
         i_Nb_Contrainte_Respectees++;
@@ -515,15 +488,23 @@ vector<vector<int>> Ma_Solution::creation_Solution_Initiale(Instance* inst) {
     this->creation_Solution_Sans_Contrainte(inst);
     this->ajout_conges_personne(inst);
     this->suppression_jours_WE_de_trop(inst);
-    this->Shift_succede(inst);
     this->suppression_shifts_par_type_de_trop(inst);
+    this->Shift_succede(inst);
     this->suppression_max_shifts_consecutifs(inst);
     this->maximum_min_per_personne(inst);
     this->ajout_jours_de_repos_consecutif(inst);
-    //this->MetaHeuristique_Recherche_Local(inst);
     int i_Nb_Contraintes_Respectees = this->check_solution(inst);
     cout << "Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 10\n";
     return v_v_IdShift_Par_Personne_et_Jour;
+}
+
+vector<vector<int>> Ma_Solution::Genere_Voisin(Instance* inst) {
+    vector<vector<int>> v_v_Nouvelle_Solution = v_v_IdShift_Par_Personne_et_Jour;
+    int p = rand() % inst->get_Nombre_Personne();
+    int j = rand() % inst->get_Nombre_Jour();
+    int nouveau_shift = rand() % inst->get_Nombre_Shift();
+    v_v_Nouvelle_Solution[p][j] = nouveau_shift;
+    return v_v_Nouvelle_Solution;
 }
 
 void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
@@ -543,7 +524,7 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
             MeilleurSolution.v_v_IdShift_Par_Personne_et_Jour = v_v_Nouvelle_Solution;
             int i_Nb_Contraintes_Respectees = MeilleurSolution.check_solution(inst);
             if (i_Nb_Contraintes_Respectees > Meilleur_Score) {
-                cout << "Nouvelle solution trouvée avec " << i_Nb_Contraintes_Respectees << " contraintes respectées.\n";
+                cout << "Nouvelle Solution trouvée avec " << i_Nb_Contraintes_Respectees << " contraintes respectées.\n";
                 v_v_Meilleur_Voisin = MeilleurSolution.v_v_IdShift_Par_Personne_et_Jour;
                 Meilleur_Score = i_Nb_Contraintes_Respectees;
                 is_improved = true;
