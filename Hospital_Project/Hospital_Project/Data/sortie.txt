@@ -363,3 +363,4 @@
 ./Data/Inst8.txt	297.204	4631
  Fichier données	 Tps de résolution 	 Best solution
 ./Data/Inst8.txt	520.117	4631
+ Fichier données	 Tps de résolution 	 Best solution

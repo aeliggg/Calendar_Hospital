@@ -660,28 +660,6 @@ bool Ma_Solution::Verifie_Dix_Contraintes(Instance* inst, int ligne_a_verifier) 
     return true;
 }
 
-bool Ma_Solution::Verifie_Dix_Contraintes(Instance* inst, int ligne_a_verifier) {
-    // On vérifie d'abord les 9 contraintes
-    if (!this->Verifie_Neuf_Contraintes(inst, ligne_a_verifier)) {
-        return false;
-    }
-    int i_duree_travail = 0;
-	// On calcul maintenant la durée totale travaillée
-    for (int j = 0; j < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size(); j++) {
-        if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1) {
-            i_duree_travail += inst->get_Shift_Duree(
-                v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]
-            );
-        }
-    }
-	// Si la durée totale travaillée est inférieure au minimum, on retourne false
-    if (i_duree_travail < inst->get_Personne_Duree_total_Min(ligne_a_verifier)) {
-        return false;
-    }
-	// Sinon on retourne true
-    return true;
-}
-
 
 vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst, int ligne_a_modifier) {
     vector<int> v_Nouvelle_Ligne = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
@@ -785,6 +763,48 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
 
             // VÉRIFIER que la nouvelle ligne respecte bien les 9 contraintes
             if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " corrigée avec succès !\n";
+                progression = true;
+            }
+            else {
+                cout << "Échec de correction pour la ligne " << ligne << ", restauration...\n";
+                v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Ligne_Avant; // Restaurer
+            }
+        }
+
+        // Recalculer le score après avoir traité toutes les lignes
+        int Nouveau_Score = this->check_solution(inst);
+
+        cout << "\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
+
+        // Si aucune progression, on risque de boucler à l'infini
+        if (!progression && Nouveau_Score == Meilleur_Score) {
+            cout << "ATTENTION : Aucune progression possible, arrêt de la métaheuristique.\n";
+            break;
+        }
+
+        Meilleur_Score = Nouveau_Score;
+    }
+    while (Meilleur_Score < 10) {
+        bool progression = false;
+
+        for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+
+            if (this->Verifie_Dix_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " déjà OK, on passe à la suivante.\n";
+                continue;
+            }
+
+            cout << "Ligne " << ligne << " ne respecte pas les 10 contraintes, tentative de correction...\n";
+
+            vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
+
+            vector<int> v_Nouvelle_Ligne = this->Genere_Ligne_Voisine_Minimum_Min_Travaille(inst, ligne);
+
+            v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Nouvelle_Ligne;
+
+            // VÉRIFIER que la nouvelle ligne respecte bien les 10 contraintes
+            if (this->Verifie_Dix_Contraintes(inst, ligne)) {
                 cout << "Ligne " << ligne << " corrigée avec succès !\n";
                 progression = true;
             }
