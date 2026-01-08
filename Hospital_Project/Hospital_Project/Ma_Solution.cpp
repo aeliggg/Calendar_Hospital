@@ -658,17 +658,54 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
 
 void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
     int Meilleur_Score = this->check_solution(inst);
-    while (Meilleur_Score < 9) { // Tant que la 9eme contrainte n'est pas respectée
-        int Compteur_Lignes_9_Contraintes = 0; // Compteur de lignes respectant les 9 contraintes
-        while (Compteur_Lignes_9_Contraintes < inst->get_Nombre_Personne()) { // Pour chaque ligne de la solution
-            int ligne_a_modifier = Compteur_Lignes_9_Contraintes; // On modifie la ligne courante
-            Ma_Solution Solution_Amelioree = *this; // On crée une copie de la solution actuelle
-            vector<int> v_Nouvelle_Ligne = Solution_Amelioree.Genere_Ligne_Voisine_Consecutifs_Shifts(inst, ligne_a_modifier); // On génère une nouvelle ligne voisine respectant la 9eme contrainte
-            Solution_Amelioree.v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne; // On remplace la ligne courante par la nouvelle ligne voisine
-            cout << "Nouvelle Solution trouvée avec " << ++Compteur_Lignes_9_Contraintes << " contraintes respectées.\n";
-            this->v_v_IdShift_Par_Personne_et_Jour = Solution_Amelioree.v_v_IdShift_Par_Personne_et_Jour;  // On met à jour la solution actuelle
-            int i_Nb_Contraintes_Respectees = this->check_solution(inst); // On vérifie le nombre de contraintes respectées
-            Meilleur_Score = i_Nb_Contraintes_Respectees; // On met à jour le meilleur score
+
+    while (Meilleur_Score < 9) {
+        bool progression = false;
+
+        // Pour chaque ligne de la solution
+        for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+
+            // VÉRIFIER D'ABORD si cette ligne respecte déjà les 9 contraintes
+            if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " déjà OK, on passe à la suivante.\n";
+                continue; // Passer à la ligne suivante sans la modifier
+            }
+
+            cout << "Ligne " << ligne << " ne respecte pas les 9 contraintes, tentative de correction...\n";
+
+            // Sauvegarder l'ancienne ligne au cas où
+            vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
+
+            // Générer une nouvelle ligne qui respecte les 9 contraintes
+            vector<int> v_Nouvelle_Ligne = this->Genere_Ligne_Voisine_Consecutifs_Shifts(inst, ligne);
+
+            // Remplacer la ligne
+            v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Nouvelle_Ligne;
+
+            // VÉRIFIER que la nouvelle ligne respecte bien les 9 contraintes
+            if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " corrigée avec succès !\n";
+                progression = true;
+            }
+            else {
+                cout << "Échec de correction pour la ligne " << ligne << ", restauration...\n";
+                v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Ligne_Avant; // Restaurer
+            }
         }
+
+        // Recalculer le score après avoir traité toutes les lignes
+        int Nouveau_Score = this->check_solution(inst);
+
+        cout << "\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
+
+        // Si aucune progression, on risque de boucler à l'infini
+        if (!progression && Nouveau_Score == Meilleur_Score) {
+            cout << "ATTENTION : Aucune progression possible, arrêt de la métaheuristique.\n";
+            break;
+        }
+
+        Meilleur_Score = Nouveau_Score;
     }
-};
+
+    cout << "\n=== Métaheuristique terminée avec score final : " << Meilleur_Score << " / 10 ===\n";
+}
