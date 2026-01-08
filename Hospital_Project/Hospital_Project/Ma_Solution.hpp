@@ -36,6 +36,8 @@ public:
     // Métaheuristique
     void MetaHeuristique_Recherche_Local(Instance* inst);
     bool Verifie_Neuf_Contraintes(Instance* inst, int ligne_a_verifier);
+    bool Verifie_Dix_Contraintes(Instance* inst, int ligne_a_verifier);
+    vector<int> Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance * inst, int ligne_a_modifier );
     vector<int> Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,int ligne_a_modifier);
 
     // Méthodes de vérification

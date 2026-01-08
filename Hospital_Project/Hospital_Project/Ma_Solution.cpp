@@ -612,6 +612,28 @@ bool Ma_Solution::Verifie_Neuf_Contraintes(Instance* inst, int ligne_a_verifier)
     return b_ligne_ok;
 }
 
+bool Ma_Solution::Verifie_Dix_Contraintes(Instance* inst, int ligne_a_verifier) {
+    // On vérifie d'abord les 9 contraintes
+    if (!this->Verifie_Neuf_Contraintes(inst, ligne_a_verifier)) {
+        return false;
+    }
+    int i_duree_travail = 0;
+	// On calcul maintenant la durée totale travaillée
+    for (int j = 0; j < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size(); j++) {
+        if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1) {
+            i_duree_travail += inst->get_Shift_Duree(
+                v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]
+            );
+        }
+    }
+	// Si la durée totale travaillée est inférieure au minimum, on retourne false
+    if (i_duree_travail < inst->get_Personne_Duree_total_Min(ligne_a_verifier)) {
+        return false;
+    }
+	// Sinon on retourne true
+    return true;
+}
+
 vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst, int ligne_a_modifier) {
     vector<int> v_Nouvelle_Ligne = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
 
@@ -638,6 +660,48 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
         int temp = v_Nouvelle_Ligne[indice1];
         v_Nouvelle_Ligne[indice1] = v_Nouvelle_Ligne[indice2];
         v_Nouvelle_Ligne[indice2] = temp;
+
+        compteur_tentatives++;
+
+        // Si on a fait trop de tentatives, on retourne à la ligne originale et on réessaye
+        if (compteur_tentatives > max_tentatives) {
+            v_Nouvelle_Ligne = v_Ligne_Originale;
+            compteur_tentatives = 0;
+            cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
+                << ligne_a_modifier << ", redémarrage...\n";
+        }
+    }
+
+    // Restaurer la ligne originale dans la solution avant de retourner
+    v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Ligne_Originale;
+
+    return v_Nouvelle_Ligne;
+}
+
+vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* inst, int ligne_a_modifier) {
+    vector<int> v_Nouvelle_Ligne = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
+
+    // Sauvegarder la ligne actuelle dans la solution pour les vérifications
+    vector<int> v_Ligne_Originale = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
+    vector<int> v_id_shift_repos;
+    int compteur_tentatives = 0;
+    int max_tentatives = 10000; // Pour éviter une boucle infinie
+	for (int i = 0; i < v_Nouvelle_Ligne.size(); i++) {
+		if (v_Nouvelle_Ligne[i]==-1) {
+			v_id_shift_repos.push_back(i);
+		}
+	}
+    while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier)) {
+        // Restaurer la ligne modifiée dans la solution pour la vérification
+        v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
+
+        // Générer deux indices aléatoires différents
+        int indice1 = rand() % v_id_shift_repos .size();
+		int indice_a_changer = v_id_shift_repos[indice1];
+
+        // Effectuer un changement
+        int temp = v_Nouvelle_Ligne[indice_a_changer];
+        v_Nouvelle_Ligne[indice1] = rand() % inst->get_Nombre_Shift();
 
         compteur_tentatives++;
 
@@ -706,6 +770,53 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
 
         Meilleur_Score = Nouveau_Score;
     }
+    while (Meilleur_Score < 10) {
+        bool progression = false;
+
+        // Pour chaque ligne de la solution
+        for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+
+            // VÉRIFIER D'ABORD si cette ligne respecte déjà les 10 contraintes
+            if (this->Verifie_Dix_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " déjà OK, on passe à la suivante.\n";
+                continue; // Passer à la ligne suivante sans la modifier
+            }
+
+            cout << "Ligne " << ligne << " ne respecte pas les 10 contraintes, tentative de correction...\n";
+
+            // Sauvegarder l'ancienne ligne au cas où
+            vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
+
+            // Générer une nouvelle ligne qui respecte les 10 contraintes
+            vector<int> v_Nouvelle_Ligne = this->Genere_Ligne_Voisine_Minimum_Min_Travaille(inst, ligne);
+
+            // Remplacer la ligne
+            v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Nouvelle_Ligne;
+
+            // VÉRIFIER que la nouvelle ligne respecte bien les 1O contraintes
+            if (this->Verifie_Dix_Contraintes(inst, ligne)) {
+                cout << "Ligne " << ligne << " corrigée avec succès !\n";
+                progression = true;
+            }
+            else {
+                cout << "Échec de correction pour la ligne " << ligne << ", restauration...\n";
+                v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Ligne_Avant; // Restaurer
+            }
+        }
+
+        // Recalculer le score après avoir traité toutes les lignes
+        int Nouveau_Score = this->check_solution(inst);
+
+        cout << "\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
+
+        // Si aucune progression, on risque de boucler à l'infini
+        if (!progression && Nouveau_Score == Meilleur_Score) {
+            cout << "ATTENTION : Aucune progression possible, arrêt de la métaheuristique.\n";
+            break;
+        }
+
+        Meilleur_Score = Nouveau_Score;
+   }
 
     cout << "\n=== Métaheuristique terminée avec score final : " << Meilleur_Score << " / 10 ===\n";
 }
