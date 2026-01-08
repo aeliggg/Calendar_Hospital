@@ -700,43 +700,133 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
 
 vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* inst, int ligne_a_modifier) {
     vector<int> v_Nouvelle_Ligne = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
-
-    // Sauvegarder la ligne actuelle dans la solution pour les vérifications
     vector<int> v_Ligne_Originale = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
-    vector<int> v_id_shift_repos;
+
+    // On trouve tous les jours de repos 
+    vector<int> v_indices_repos;
+    for (int i = 0; i < v_Nouvelle_Ligne.size(); i++) {
+        if (v_Nouvelle_Ligne[i] == -1) {
+            v_indices_repos.push_back(i);
+        }
+    }
+
+    // Calculer la durée actuelle
+    int duree_actuelle = 0;
+    for (int j = 0; j < v_Nouvelle_Ligne.size(); j++) {
+        if (v_Nouvelle_Ligne[j] != -1) {
+            duree_actuelle += inst->get_Shift_Duree(v_Nouvelle_Ligne[j]);
+        }
+    }
+
+    int duree_manquante = inst->get_Personne_Duree_total_Min(ligne_a_modifier) - duree_actuelle;
+
+    // Si on a déjà le minimum, pas besoin de modifier
+    if (duree_manquante <= 0) {
+        return v_Nouvelle_Ligne;
+    }
+
     int compteur_tentatives = 0;
-    int max_tentatives = 10000; // Pour éviter une boucle infinie
-	for (int i = 0; i < v_Nouvelle_Ligne.size(); i++) {
-		if (v_Nouvelle_Ligne[i]==-1) {
-			v_id_shift_repos.push_back(i);
-		}
-	}
+    int max_tentatives = 10000;
+
     while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier)) {
-        // Restaurer la ligne modifiée dans la solution pour la vérification
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
-        // Générer deux indices aléatoires différents
-        int indice1 = rand() % v_id_shift_repos .size();
-		int indice_a_changer = v_id_shift_repos[indice1];
+        // Calculer combien de shifts minimum on doit ajouter
+        int duree_temp = 0;
+        vector<int> v_i_Nb_shift(inst->get_Nombre_Shift(), 0);
 
-        // Effectuer un changement
-        int temp = v_Nouvelle_Ligne[indice_a_changer];
-        v_Nouvelle_Ligne[indice1] = rand() % inst->get_Nombre_Shift();
+        for (int j = 0; j < v_Nouvelle_Ligne.size(); j++) {
+            if (v_Nouvelle_Ligne[j] != -1) {
+                duree_temp += inst->get_Shift_Duree(v_Nouvelle_Ligne[j]);
+                v_i_Nb_shift[v_Nouvelle_Ligne[j]]++;
+            }
+        }
+
+        int manque = inst->get_Personne_Duree_total_Min(ligne_a_modifier) - duree_temp;
+
+        if (manque > 0 && v_indices_repos.size() > 0) {
+            // Choisir un jour de repos aléatoire
+            int idx_random = rand() % v_indices_repos.size();
+            int jour_a_remplacer = v_indices_repos[idx_random];
+
+            // Trouver les shifts disponibles (pas au max + peuvent se suivre)
+            vector<int> shifts_disponibles;
+
+            for (int s = 0; s < inst->get_Nombre_Shift(); s++) {
+                // Vérifier si le shift n'a pas atteint son max
+                if (v_i_Nb_shift[s] < inst->get_Personne_Shift_Nbre_Max(ligne_a_modifier, s)) {
+                    bool peut_se_placer = true;
+
+                    // Vérifier la succession avec le shift précédent
+                    if (jour_a_remplacer > 0 && v_Nouvelle_Ligne[jour_a_remplacer - 1] != -1) {
+                        if (!inst->is_possible_Shift_Succede(v_Nouvelle_Ligne[jour_a_remplacer - 1], s)) {
+                            peut_se_placer = false;
+                        }
+                    }
+
+                    // Vérifier la succession avec le shift suivant
+                    if (jour_a_remplacer < v_Nouvelle_Ligne.size() - 1 && v_Nouvelle_Ligne[jour_a_remplacer + 1] != -1) {
+                        if (!inst->is_possible_Shift_Succede(s, v_Nouvelle_Ligne[jour_a_remplacer + 1])) {
+                            peut_se_placer = false;
+                        }
+                    }
+
+                    if (peut_se_placer) {
+                        shifts_disponibles.push_back(s);
+                    }
+                }
+            }
+
+            // Si on a des shifts disponibles, en choisir un aléatoirement
+            if (shifts_disponibles.size() > 0) {
+                int shift_choisi = shifts_disponibles[rand() % shifts_disponibles.size()];
+                v_Nouvelle_Ligne[jour_a_remplacer] = shift_choisi;
+
+                cout << "Ajout du shift " << shift_choisi << " au jour "
+                    << jour_a_remplacer << "\n";
+
+                // Retirer cet indice de la liste des repos disponibles
+                v_indices_repos.erase(v_indices_repos.begin() + idx_random);
+            }
+            else {
+                // Aucun shift disponible pour ce jour, essayer un autre jour
+                cout << "Aucun shift disponible pour le jour " << jour_a_remplacer << "\n";
+            }
+        }
+        else {
+            // Stratégie alternative : swap aléatoire comme avant
+            int indice1 = rand() % v_Nouvelle_Ligne.size();
+            int indice2 = rand() % v_Nouvelle_Ligne.size();
+
+            while (indice2 == indice1) {
+                indice2 = rand() % v_Nouvelle_Ligne.size();
+            }
+
+            int temp = v_Nouvelle_Ligne[indice1];
+            v_Nouvelle_Ligne[indice1] = v_Nouvelle_Ligne[indice2];
+            v_Nouvelle_Ligne[indice2] = temp;
+        }
 
         compteur_tentatives++;
 
-        // Si on a fait trop de tentatives, on retourne à la ligne originale et on réessaye
         if (compteur_tentatives > max_tentatives) {
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
+
+            // Recalculer les indices de repos
+            v_indices_repos.clear();
+            for (int i = 0; i < v_Nouvelle_Ligne.size(); i++) {
+                if (v_Nouvelle_Ligne[i] == -1) {
+                    v_indices_repos.push_back(i);
+                }
+            }
+
             cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
                 << ligne_a_modifier << ", redémarrage...\n";
         }
     }
 
-    // Restaurer la ligne originale dans la solution avant de retourner
     v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Ligne_Originale;
-
     return v_Nouvelle_Ligne;
 }
 
