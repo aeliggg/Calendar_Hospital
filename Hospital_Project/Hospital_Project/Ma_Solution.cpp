@@ -419,75 +419,75 @@ int Ma_Solution::check_solution(Instance* inst) {
     int i_Nb_Contrainte_Respectees = 1;
 
     if (this->check_conges(inst) == true) {
-        //cout << "Conge OK\n";
+        cout << "Conge OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Conge NOT OK\n";
+        cout << "Conge NOT OK\n";
     }
 
     if (this->check_min_consecutif_shifts(inst) == true) {
-        //cout << "Min consecutif shifts OK\n";
+        cout << "Min consecutif shifts OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Min consecutif shifts NOT OK\n";
+        cout << "Min consecutif shifts NOT OK\n";
     }
 
     if (this->check_min_minutes_travailees(inst) == true) {
-        //cout << "Min minutes travaillees OK\n";
+        cout << "Min minutes travaillees OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Min minutes travaillees NOT OK\n";
+        cout << "Min minutes travaillees NOT OK\n";
     }
 
     if (this->check_max_assignable_shifts(inst) == true) {
-        //cout << "Max assignable shifts OK\n";
+        cout << "Max assignable shifts OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Max assignable shifts NOT OK\n";
+        cout << "Max assignable shifts NOT OK\n";
     }
 
     if (this->check_max_we(inst) == true) {
-        //cout << "Max WE OK\n";
+        cout << "Max WE OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Max WE NOT OK\n";
+        cout << "Max WE NOT OK\n";
     }
 
     if (this->check_min_repos_consecutif(inst) == true) {
-        //cout << "Min repos consecutif OK\n";
+        cout << "Min repos consecutif OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Min repos consecutif NOT OK\n";
+        cout << "Min repos consecutif NOT OK\n";
     }
 
     if (this->check_max_shift_consecutif(inst) == true) {
-        //cout << "Max shift consecutif OK\n";
+        cout << "Max shift consecutif OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Max shift consecutif NOT OK\n";
+        cout << "Max shift consecutif NOT OK\n";
     }
 
     if (this->check_max_minutes_per_personne(inst) == true) {
-        //cout << "Max minutes par personne OK\n";
+        cout << "Max minutes par personne OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Max minutes par personne NOT OK\n";
+        cout << "Max minutes par personne NOT OK\n";
     }
 
     if (this->check_shift_succede(inst) == true) {
-        //cout << "Shift succede OK\n";
+        cout << "Shift succede OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        //cout << "Shift succede NOT OK\n";
+        cout << "Shift succede NOT OK\n";
     }
 
     return i_Nb_Contrainte_Respectees;
@@ -515,133 +515,154 @@ vector<vector<int>> Ma_Solution::creation_Solution_Initiale(Instance* inst) {
 
 bool Ma_Solution::Verifie_Neuf_Contraintes(Instance* inst, int ligne_a_verifier) {
     bool b_ligne_ok = true;
-    bool b_test_si_premier_jour_off = false;
-    int i_fc_obj, i, j, jj, k, i_duree_travail, i_shift_consecutif, i_nb_WE;
-    vector<vector<int>> v_i_nb_personne_par_Shift_et_jour(inst->get_Nombre_Shift(), vector<int>(inst->get_Nombre_Jour(), 0));
-    
-    
+    int i_duree_travail = 0;
+    int i_shift_consecutif = 0;
+    int i_nb_WE = 0;
     vector<int> v_i_Nb_shift(inst->get_Nombre_Shift(), 0);
-    i_duree_travail = 0;
-    i_shift_consecutif = 0;
-    i_nb_WE = 0;
 
-    for (j = 0; j < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size(); j++){
-        if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1)
-        {
-            v_i_Nb_shift[v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]] = v_i_Nb_shift[v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]] + 1;
-            v_i_nb_personne_par_Shift_et_jour[v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]][j] = v_i_nb_personne_par_Shift_et_jour[v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]][j] + 1;
-            i_duree_travail = i_duree_travail + inst->get_Shift_Duree(v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]);
+    for (int j = 0; j < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size(); j++) {
+        if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1) {
+            v_i_Nb_shift[v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]]++;
+            i_duree_travail += inst->get_Shift_Duree(v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j]);
             i_shift_consecutif++;
-            if ((j % 7) == 5)
+
+            if ((j % 7) == 5) i_nb_WE++;
+            if (((j % 7) == 6) && (j > 0) && (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j - 1] == -1))
                 i_nb_WE++;
-            if (((j % 7) == 6) && (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j - 1] == -1))
-                i_nb_WE++;
-            //Vérification du nombre de shifts consécutifs maximum assignable à chaque personne
-            if (i_shift_consecutif > inst->get_Personne_Nbre_Shift_Consecutif_Max(ligne_a_verifier))
-            {
+
+            // Vérification du nombre de shifts consécutifs maximum
+            if (i_shift_consecutif > inst->get_Personne_Nbre_Shift_Consecutif_Max(ligne_a_verifier)) {
                 b_ligne_ok = false;
             }
 
-            //Vérification des jours de congés de chaque personne
-            if (!inst->is_Available_Personne_Jour(ligne_a_verifier, j))
-            {
-                {
-                    b_ligne_ok= false;
-                }
+            // Vérification des jours de congés
+            if (!inst->is_Available_Personne_Jour(ligne_a_verifier, j)) {
+                b_ligne_ok = false;
             }
         }
-        else
-        {
-            //Vérification du nombre de shifts consécutifs minimum assignable à chaque personne
-            if ((i_shift_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne_a_verifier)) && (i_shift_consecutif != 0) && ((j - inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne_a_verifier)) > 0))
-            {
+        else {
+            // Jour OFF (-1)
+
+            // Vérification du minimum de shifts consécutifs pour la séquence qui vient de se terminer
+            if (i_shift_consecutif > 0 && i_shift_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne_a_verifier)) {
                 b_ligne_ok = false;
             }
             i_shift_consecutif = 0;
-            b_test_si_premier_jour_off = false;
-            if (j != 0)
-            {
-                if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j - 1] != -1)
-                    b_test_si_premier_jour_off = true;
-            }
-            if (b_test_si_premier_jour_off)
-            {
-                b_test_si_premier_jour_off = false;
-                for (jj = j; jj < (j + inst->get_Personne_Jour_OFF_Consecutif_Min(ligne_a_verifier)); jj++)
-                {
-                    if (jj < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size())
-                        if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][jj] != -1)
-                            b_test_si_premier_jour_off = true;
-                }
-                if (b_test_si_premier_jour_off)
-                {
-                    b_ligne_ok = false;
-                }
-            }
         }
-        //Vérification des successions des Shifts
-        if (j != (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size() - 1))
-        {
-            if ((v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1) && (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j + 1] != -1))
-            {
-                if (!inst->is_possible_Shift_Succede(v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j], v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j + 1]))
-                {
+
+        // Vérification des successions de shifts
+        if (j < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size() - 1) {
+            if ((v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j] != -1) &&
+                (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j + 1] != -1)) {
+                if (!inst->is_possible_Shift_Succede(v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j],
+                    v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][j + 1])) {
                     b_ligne_ok = false;
                 }
             }
         }
     }
-    //Vérification de la durée totale maximale et minimale de chaque personne
-    if (i_duree_travail > inst->get_Personne_Duree_total_Max(ligne_a_verifier))
-    {
+
+    // Vérifier la dernière séquence de shifts si la ligne se termine par des shifts
+    if (i_shift_consecutif > 0 && i_shift_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(ligne_a_verifier)) {
         b_ligne_ok = false;
     }
-    //Vérification du nombre de WE (samedi ou/et dimanche) de travail maximal pour chaque personne
-    if (i_nb_WE > inst->get_Personne_Nbre_WE_Max(ligne_a_verifier))
-    {
+
+    // VÉRIFICATION COMPLÈTE : Parcourir TOUTES les séquences de jours OFF
+    int min_jours_off = inst->get_Personne_Jour_OFF_Consecutif_Min(ligne_a_verifier);
+    if (min_jours_off > 1) {
+        int i = 0;
+        while (i < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size()) {
+            if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][i] == -1) {
+                // Début d'une séquence OFF, compter sa longueur
+                int debut_sequence = i;
+                int nb_jours_off_consecutifs = 0;
+
+                while (i < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size() &&
+                    v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][i] == -1) {
+                    nb_jours_off_consecutifs++;
+                    i++;
+                }
+
+                // Vérifier si cette séquence OFF respecte le minimum
+                // On vérifie TOUTES les séquences, y compris celles en début/fin
+                // SAUF si c'est toute la ligne qui est en OFF (cas extrême)
+                bool a_des_shifts_avant = false;
+                bool a_des_shifts_apres = false;
+
+                // Vérifier s'il y a des shifts avant cette séquence
+                for (int k = 0; k < debut_sequence; k++) {
+                    if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][k] != -1) {
+                        a_des_shifts_avant = true;
+                        break;
+                    }
+                }
+
+                // Vérifier s'il y a des shifts après cette séquence
+                for (int k = i; k < v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier].size(); k++) {
+                    if (v_v_IdShift_Par_Personne_et_Jour[ligne_a_verifier][k] != -1) {
+                        a_des_shifts_apres = true;
+                        break;
+                    }
+                }
+
+                // On vérifie la séquence si elle a au moins un shift avant OU après
+                // (donc on exclut seulement le cas où toute la ligne est en OFF)
+                if ((a_des_shifts_avant || a_des_shifts_apres) &&
+                    nb_jours_off_consecutifs < min_jours_off) {
+                    b_ligne_ok = false;
+                }
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    // Vérification de la durée totale maximale
+    if (i_duree_travail > inst->get_Personne_Duree_total_Max(ligne_a_verifier)) {
         b_ligne_ok = false;
     }
-    //Vérification du nombre maximal de shifts de chaque personne
-    for (j = 0; j < inst->get_Nombre_Shift(); j++)
-    {
-        if (v_i_Nb_shift[j] > inst->get_Personne_Shift_Nbre_Max(ligne_a_verifier, j))
-        {
+
+    // Vérification du nombre de WE maximum
+    if (i_nb_WE > inst->get_Personne_Nbre_WE_Max(ligne_a_verifier)) {
+        b_ligne_ok = false;
+    }
+
+    // Vérification du nombre maximal de shifts par type
+    for (int shift_type = 0; shift_type < inst->get_Nombre_Shift(); shift_type++) {
+        if (v_i_Nb_shift[shift_type] > inst->get_Personne_Shift_Nbre_Max(ligne_a_verifier, shift_type)) {
             b_ligne_ok = false;
         }
     }
+
     return b_ligne_ok;
 }
+
 
 vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst, int ligne_a_modifier) {
     vector<int> v_Nouvelle_Ligne = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
 
-    // Sauvegarder la ligne actuelle dans la solution pour les vérifications
     vector<int> v_Ligne_Originale = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
 
     int compteur_tentatives = 0;
-    int max_tentatives = 10000; // Pour éviter une boucle infinie
+    int max_tentatives = 50000; 
 
     while (!this->Verifie_Neuf_Contraintes(inst, ligne_a_modifier)) {
-        // Restaurer la ligne modifiée dans la solution pour la vérification
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
-        // Générer deux indices aléatoires différents
         int indice1 = rand() % v_Nouvelle_Ligne.size();
         int indice2 = rand() % v_Nouvelle_Ligne.size();
 
-        // S'assurer que les deux indices sont différents
         while (indice2 == indice1) {
             indice2 = rand() % v_Nouvelle_Ligne.size();
         }
 
-        // Effectuer le swap
         int temp = v_Nouvelle_Ligne[indice1];
         v_Nouvelle_Ligne[indice1] = v_Nouvelle_Ligne[indice2];
         v_Nouvelle_Ligne[indice2] = temp;
 
         compteur_tentatives++;
 
-        // Si on a fait trop de tentatives, on retourne à la ligne originale et on réessaye
         if (compteur_tentatives > max_tentatives) {
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
@@ -650,7 +671,6 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
         }
     }
 
-    // Restaurer la ligne originale dans la solution avant de retourner
     v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Ligne_Originale;
 
     return v_Nouvelle_Ligne;
@@ -662,24 +682,19 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
     while (Meilleur_Score < 9) {
         bool progression = false;
 
-        // Pour chaque ligne de la solution
         for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
 
-            // VÉRIFIER D'ABORD si cette ligne respecte déjà les 9 contraintes
             if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
                 cout << "Ligne " << ligne << " déjà OK, on passe à la suivante.\n";
-                continue; // Passer à la ligne suivante sans la modifier
+                continue;
             }
 
             cout << "Ligne " << ligne << " ne respecte pas les 9 contraintes, tentative de correction...\n";
 
-            // Sauvegarder l'ancienne ligne au cas où
             vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
 
-            // Générer une nouvelle ligne qui respecte les 9 contraintes
             vector<int> v_Nouvelle_Ligne = this->Genere_Ligne_Voisine_Consecutifs_Shifts(inst, ligne);
 
-            // Remplacer la ligne
             v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Nouvelle_Ligne;
 
             // VÉRIFIER que la nouvelle ligne respecte bien les 9 contraintes
