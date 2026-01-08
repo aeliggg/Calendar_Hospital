@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include "Instance.hpp"
 #include "Solution.hpp"
+#include "Ma_Solution.hpp"
 
 using namespace std;
 
@@ -50,8 +51,8 @@ int main(int argc, const char * argv[])
                     chrono_start = chrono::system_clock::now();
                     i_best_solution_score=Resolution(instance);
                     cout<< " Fin de résolution de "<<s_tmp<<endl;
-					Solution solution_initiale;
-                    vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(*instance);
+					Ma_Solution solution_initiale;
+                    vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(instance);
                     solution_initiale.afficher_solution();
                     chrono_end = chrono::system_clock::now();
                     elapsed=chrono_end-chrono_start;
