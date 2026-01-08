@@ -499,61 +499,14 @@ vector<vector<int>> Ma_Solution::creation_Solution_Initiale(Instance* inst) {
             vector<int>(inst->get_Nombre_Jour(), -1)
         );
         this->creation_Solution_Sans_Contrainte(inst);
-        std::cout << "Initial         " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->ajout_conges_personne(inst);
-        std::cout << "Conges          " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->suppression_jours_WE_de_trop(inst);
-        std::cout << "Week-ends       " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->suppression_shifts_par_type_de_trop(inst);
-        std::cout << "Shifts par type " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->Shift_succede(inst);
-        std::cout << "Shift succedent " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->suppression_max_shifts_consecutifs(inst);
-        std::cout << "Max shifts cons " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->maximum_min_per_personne(inst);
-        std::cout << "Max minutes     " << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
         this->ajout_jours_de_repos_consecutif(inst);
-        std::cout << "Repos consecutif" << " : ";
-        for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[1].size(); j++)
-        {
-            std::cout << v_v_IdShift_Par_Personne_et_Jour[1][j] << " ";
-        }
-        std::cout << endl;
+        //this->MetaHeuristique_Recherche_Local(inst);
         int i_Nb_Contraintes_Respectees = this->check_solution(inst);
         cout << "Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 10\n";
         return v_v_IdShift_Par_Personne_et_Jour;

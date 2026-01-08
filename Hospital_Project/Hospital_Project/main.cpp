@@ -50,10 +50,7 @@ int main(int argc, const char * argv[])
                     instance->chargement_Instance(s_chemin);
                     chrono_start = chrono::system_clock::now();
                     i_best_solution_score=Resolution(instance);
-                    cout<< " Fin de résolution de "<<s_tmp<<endl;
-					Ma_Solution solution_initiale;
-                    vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(instance);
-                    solution_initiale.afficher_solution();
+                    cout << " Fin de résolution de " << s_tmp << endl;
                     chrono_end = chrono::system_clock::now();
                     elapsed=chrono_end-chrono_start;
                     fichier_Sortie<<s_chemin <<"\t"<<elapsed.count()<<"\t"<< i_best_solution_score <<endl;
@@ -133,8 +130,11 @@ int Resolution(Instance * instance)
     uneSolution->i_valeur_fonction_objectif=4631;
  /* * * * * * * * * * * * */
     
-    
-    
+    Ma_Solution solution_initiale;
+    vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(instance);
+	solution_initiale.afficher_solution();
+	uneSolution->v_v_IdShift_Par_Personne_et_Jour = v_v_Solution_Initiale;
+
     uneSolution->Verification_Solution(instance);
     
     i_val_Retour_Fct_obj=uneSolution->i_valeur_fonction_objectif;
