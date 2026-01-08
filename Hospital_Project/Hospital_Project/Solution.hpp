@@ -9,41 +9,17 @@ using namespace std;
 
 class Solution
 {
-    public:// /!\ Normalement pour coder "proprepement" il faudrait mettre ces attributs en privée et passer par des fonctions setters/getters pour les modifier. Cependant, dans une méthode de résolution, les opérations sur les solutions (ajout d'id POI, supression d'ID, etc.) sont très très nombreuses, passer par des setters/getters (qui en plus vérifie certaines opérations) est très coûteux en temps de calcul. En optimisation, on évite et manipule directement les solutions (autres méthodes, passer par les inline mais ça reste lourd).
-       
-        vector<vector<int>> v_v_IdShift_Par_Personne_et_Jour;   // v_v_IdShift_Par_Personne_et_Jour[p][j] Donne l'Id Shift (ou -1 si ne travaille pas) pour la personne p le jour j. La taille de la première dimension du tableau est égale au nombre de personne puis la deuxième dimension est égale au nombre de jour.
-        
-        int i_valeur_fonction_objectif;                 // Valeur de la fonction objectif (somme des scores des POIs visités
-    
-    public:
-    /* Constructeurs et destructeur  */
-        Solution();
-        virtual ~Solution();
-    bool Verification_Solution(Instance *instance);
-    
-    /* Fonction de création d'une première instance sans aucune contrainte*/
-    void creation_Solution_Sans_Contrainte(Instance inst);
-    void Shift_succede(Instance inst);
-    void ajout_conges_personne(Instance inst);
-    void suppression_jours_WE_de_trop(Instance inst);
-    void suppression_shifts_par_type_de_trop(Instance inst);
-    void maximum_min_per_personne(Instance inst);
-    void suppression_max_shifts_consecutifs(Instance inst);
-	void ajout_jours_de_repos_consecutif(Instance inst);
-    void corriger_succession_et_max_shifts(Instance inst);
-    vector<vector<int>> creation_Solution_Initiale(Instance inst);
-    bool check_max_we(Instance inst);
-    bool check_min_repos_consecutif(Instance inst);
-    bool check_max_shift_consecutif(Instance inst);
-    bool check_max_minutes_per_personne(Instance inst);
-    bool check_shift_succede(Instance inst);
-    bool check_conges(Instance inst);
-    bool check_min_consecutif_shifts(Instance inst);
-	bool check_min_minutes_travailees(Instance inst);
-	bool check_max_assignable_shifts(Instance inst);
-	int check_solution(Instance inst);
-    void afficher_solution();
+public:// /!\ Normalement pour coder "proprepement" il faudrait mettre ces attributs en privée et passer par des fonctions setters/getters pour les modifier. Cependant, dans une méthode de résolution, les opérations sur les solutions (ajout d'id POI, supression d'ID, etc.) sont très très nombreuses, passer par des setters/getters (qui en plus vérifie certaines opérations) est très coûteux en temps de calcul. En optimisation, on évite et manipule directement les solutions (autres méthodes, passer par les inline mais ça reste lourd).
 
+    vector<vector<int>> v_v_IdShift_Par_Personne_et_Jour;   // v_v_IdShift_Par_Personne_et_Jour[p][j] Donne l'Id Shift (ou -1 si ne travaille pas) pour la personne p le jour j. La taille de la première dimension du tableau est égale au nombre de personne puis la deuxième dimension est égale au nombre de jour.
+
+    int i_valeur_fonction_objectif;                 // Valeur de la fonction objectif (somme des scores des POIs visités
+
+public:
+    /* Constructeurs et destructeur  */
+    Solution();
+    virtual ~Solution();
+    bool Verification_Solution(Instance* instance);
 };
 
 #endif
