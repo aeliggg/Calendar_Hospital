@@ -683,7 +683,7 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
             cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
-                << ligne_a_modifier u8<< ", redémarrage...\n";
+                << ligne_a_modifier << u8", redémarrage...\n";
         }
     }
 
