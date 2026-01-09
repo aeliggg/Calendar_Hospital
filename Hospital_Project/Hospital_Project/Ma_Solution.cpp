@@ -128,13 +128,13 @@ void Ma_Solution::Shift_succede(Instance* inst) {
 }
 
 void Ma_Solution::afficher_solution() {
-    cout << u8"\n=== Solution générée ===\n";
+    std::cout << u8"\n=== Solution générée ===\n";
     for (size_t p = 0; p < v_v_IdShift_Par_Personne_et_Jour.size(); p++) {
-        cout << "Personne " << p << " : ";
+        std::cout << "Personne " << p << " : ";
         for (size_t j = 0; j < v_v_IdShift_Par_Personne_et_Jour[p].size(); j++) {
-            cout << v_v_IdShift_Par_Personne_et_Jour[p][j] << " ";
+            std::cout << v_v_IdShift_Par_Personne_et_Jour[p][j] << " ";
         }
-        cout << endl;
+        std::cout << endl;
     }
 }
 
@@ -159,7 +159,7 @@ void Ma_Solution::maximum_min_per_personne(Instance* inst) {
                 compteur_boucle++;
                 shift_aleatoire = rand() % inst->get_Nombre_Jour();
                 if (compteur_boucle > 1000) {
-                    cout << u8"Erreur : pas de solution possible avec les contraintes de durée maximale de travail par personne." << endl;
+                    std::cout << u8"Erreur : pas de solution possible avec les contraintes de durée maximale de travail par personne." << endl;
                     return;
                 }
             }
@@ -319,7 +319,7 @@ bool Ma_Solution::check_max_minutes_per_personne(Instance* inst) {
                 compteur_minute += inst->get_Shift_Duree(v_v_IdShift_Par_Personne_et_Jour[iIndexPersonne][iIndexJour]);
             }
             if (compteur_minute > nbMaxMinutes) {
-                cout << "Personne " << iIndexPersonne << " compteur_minute : " << compteur_minute << " maximum : " << nbMaxMinutes << "\n";
+                std::cout << "Personne " << iIndexPersonne << " compteur_minute : " << compteur_minute << " maximum : " << nbMaxMinutes << "\n";
                 return false;
             }
         }
@@ -368,14 +368,14 @@ bool Ma_Solution::check_min_consecutif_shifts(Instance* inst) {
             }
             else {
                 if (compteur_consecutif > 0 && compteur_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(p)) {
-                    cout << "Personne " << p << " jour " << j << " compteur_consecutif " << compteur_consecutif << "\n";
+                    std::cout << "Personne " << p << " jour " << j << " compteur_consecutif " << compteur_consecutif << "\n";
                     return false;
                 }
                 compteur_consecutif = 0;
             }
         }
         if (compteur_consecutif > 0 && compteur_consecutif < inst->get_Personne_Nbre_Shift_Consecutif_Min(p)) {
-            cout << "Personne " << p << " dernier jour compteur_consecutif " << compteur_consecutif << "\n";
+            std::cout << "Personne " << p << " dernier jour compteur_consecutif " << compteur_consecutif << "\n";
             return false;
         }
     }
@@ -392,7 +392,7 @@ bool Ma_Solution::check_min_minutes_travailees(Instance* inst) {
             }
         }
         if (duree_travail < inst->get_Personne_Duree_total_Min(p)) {
-            cout << "Personne " << p << " duree_travail " << duree_travail << " minimum : " << inst->get_Personne_Duree_total_Min(p) << "\n";
+            std::cout << "Personne " << p << " duree_travail " << duree_travail << " minimum : " << inst->get_Personne_Duree_total_Min(p) << "\n";
             return false;
         }
     }
@@ -419,75 +419,75 @@ int Ma_Solution::check_solution(Instance* inst) {
     int i_Nb_Contrainte_Respectees = 1;
 
     if (this->check_conges(inst) == true) {
-        cout << "Conge OK\n";
+        std::cout << "Conge OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Conge NOT OK\n";
+        std::cout << "Conge NOT OK\n";
     }
 
     if (this->check_min_consecutif_shifts(inst) == true) {
-        cout << "Min consecutif shifts OK\n";
+        std::cout << "Min consecutif shifts OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Min consecutif shifts NOT OK\n";
+        std::cout << "Min consecutif shifts NOT OK\n";
     }
 
     if (this->check_min_minutes_travailees(inst) == true) {
-        cout << "Min minutes travaillees OK\n";
+        std::cout << "Min minutes travaillees OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Min minutes travaillees NOT OK\n";
+        std::cout << "Min minutes travaillees NOT OK\n";
     }
 
     if (this->check_max_assignable_shifts(inst) == true) {
-        cout << "Max assignable shifts OK\n";
+        std::cout << "Max assignable shifts OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Max assignable shifts NOT OK\n";
+        std::cout << "Max assignable shifts NOT OK\n";
     }
 
     if (this->check_max_we(inst) == true) {
-        cout << "Max WE OK\n";
+        std::cout << "Max WE OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Max WE NOT OK\n";
+        std::cout << "Max WE NOT OK\n";
     }
 
     if (this->check_min_repos_consecutif(inst) == true) {
-        cout << "Min repos consecutif OK\n";
+        std::cout << "Min repos consecutif OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Min repos consecutif NOT OK\n";
+        std::cout << "Min repos consecutif NOT OK\n";
     }
 
     if (this->check_max_shift_consecutif(inst) == true) {
-        cout << "Max shift consecutif OK\n";
+        std::cout << "Max shift consecutif OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Max shift consecutif NOT OK\n";
+        std::cout << "Max shift consecutif NOT OK\n";
     }
 
     if (this->check_max_minutes_per_personne(inst) == true) {
-        cout << "Max minutes par personne OK\n";
+        std::cout << "Max minutes par personne OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Max minutes par personne NOT OK\n";
+        std::cout << "Max minutes par personne NOT OK\n";
     }
 
     if (this->check_shift_succede(inst) == true) {
-        cout << "Shift succede OK\n";
+        std::cout << "Shift succede OK\n";
         i_Nb_Contrainte_Respectees++;
     }
     else {
-        cout << "Shift succede NOT OK\n";
+        std::cout << "Shift succede NOT OK\n";
     }
 
     return i_Nb_Contrainte_Respectees;
@@ -508,7 +508,7 @@ vector<vector<int>> Ma_Solution::creation_Solution_Initiale(Instance* inst) {
         this->ajout_jours_de_repos_consecutif(inst);
         this->MetaHeuristique_Recherche_Local(inst);
         int i_Nb_Contraintes_Respectees = this->check_solution(inst);
-        cout << u8"Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 10\n";
+        std::cout << u8"Nombre de contraintes respectées : " << i_Nb_Contraintes_Respectees << " / 10\n";
         return v_v_IdShift_Par_Personne_et_Jour;
     }
 
@@ -661,11 +661,11 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
     vector<int> v_Ligne_Originale = v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier];
 
     int compteur_tentatives = 0;
-    int max_tentatives = 50000; 
+    int max_tentatives = 1000; 
     int compteur_max_tentatives_atteint = 0;
 
 
-    while (!this->Verifie_Neuf_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 10) {
+    while (!this->Verifie_Neuf_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 2) {
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
         int indice1 = rand() % v_Nouvelle_Ligne.size();
@@ -685,7 +685,7 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
 			compteur_max_tentatives_atteint++;
-            cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
+            std::cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
                 << ligne_a_modifier << u8", redémarrage...\n";
         }
     }
@@ -723,10 +723,10 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
     }
 
     int compteur_tentatives = 0;
-    int max_tentatives = 50000;
+    int max_tentatives = 1000;
     int compteur_max_tentatives_atteint = 0;
 
-    while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 10) {
+    while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 1) {
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
         // Calculer combien de shifts minimum on doit ajouter
@@ -820,7 +820,7 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
                 }
             }
 
-            cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
+            std::cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
                 << ligne_a_modifier << u8", redémarrage...\n";
         }
     }
@@ -832,17 +832,26 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
 void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
     int Meilleur_Score = this->check_solution(inst);
 
-    while (Meilleur_Score < 9) {
+	int precScoreLignes = 0;  // On initialise le score des lignes vérifiant 9 contraintes
+    for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+        if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
+            precScoreLignes++;  // Le score s'incrémente dès qu'une ligne vérifie 9 contraintes
+        }
+    }
+	int compteurStagnation = 0; // Compteur pour suivre les itérations sans amélioration en nombre de lignes vérifiant 9 contraintes
+	int maxStagnation = 500;
+
+    while (Meilleur_Score < 9 && compteurStagnation < maxStagnation) {
         bool progression = false;
 
         for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
 
             if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
-                cout << "Ligne " << ligne << u8" déjà OK, on passe à la suivante.\n";
+                std::cout << "Ligne " << ligne << u8" déjà OK, on passe à la suivante.\n";
                 continue;
             }
 
-            cout << "Ligne " << ligne << " ne respecte pas les 9 contraintes, tentative de correction...\n";
+            std::cout << "Ligne " << ligne << " ne respecte pas les 9 contraintes, tentative de correction...\n";
 
             vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
 
@@ -852,39 +861,61 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
 
             // VÉRIFIER que la nouvelle ligne respecte bien les 9 contraintes
             if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
-                cout << "Ligne " << ligne << u8" corrigée avec succès !\n";
+                std::cout << "Ligne " << ligne << u8" corrigée avec succès !\n";
                 progression = true;
             }
             else {
-                cout << u8"Échec de correction pour la ligne " << ligne << ", restauration...\n";
+                std::cout << u8"Échec de correction pour la ligne " << ligne << ", restauration...\n";
                 v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Ligne_Avant; // Restaurer
             }
         }
 
         // Recalculer le score après avoir traité toutes les lignes
         int Nouveau_Score = this->check_solution(inst);
-
-        cout << u8"\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
-
-        // Si aucune progression, on risque de boucler à l'infini
-        if (!progression && Nouveau_Score == Meilleur_Score) {
-            cout << u8"ATTENTION : Aucune progression possible, arrêt de la métaheuristique.\n";
-            break;
+        int scoreLignes = 0;
+        for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+            if (this->Verifie_Neuf_Contraintes(inst, ligne)) {
+                scoreLignes++;
+            }
         }
 
+        if (scoreLignes == precScoreLignes) {
+            compteurStagnation++;
+        }
+        else {
+            compteurStagnation = 0;
+			precScoreLignes = scoreLignes;
+        }
+        std::cout << u8"\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
+        std::cout << u8"=== Nb personnes respectant les 9 contraintes : " << scoreLignes << " / " << inst->get_Nombre_Personne() << " === \n";
+        if (compteurStagnation > 0) {
+            std::cout << u8"=== Stagnation détectée : " << compteurStagnation << "/" << maxStagnation << u8" itérations sans amélioration === \n";
+        }
+        
+        
         Meilleur_Score = Nouveau_Score;
     }
-    while (Meilleur_Score < 10) {
+    
+    int precScoreLignes10 = 0;  // On initialise le score des lignes vérifiant 9 contraintes
+    for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+        if (this->Verifie_Dix_Contraintes(inst, ligne)) {
+            precScoreLignes10++;  // Le score s'incrémente dès qu'une ligne vérifie 9 contraintes
+        }
+    }
+    int compteurStagnation10 = 0; // Compteur pour suivre les itérations sans amélioration en nombre de lignes vérifiant 9 contraintes
+
+
+    while (Meilleur_Score < 10 && compteurStagnation10 <maxStagnation) {
         bool progression = false;
 
         for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
 
             if (this->Verifie_Dix_Contraintes(inst, ligne)) {
-                cout << "Ligne " << ligne << u8" déjà OK, on passe à la suivante.\n";
+                std::cout << "Ligne " << ligne << u8" déjà OK, on passe à la suivante.\n";
                 continue;
             }
 
-            cout << "Ligne " << ligne << " ne respecte pas les 10 contraintes, tentative de correction...\n";
+            std::cout << "Ligne " << ligne << " ne respecte pas les 10 contraintes, tentative de correction...\n";
 
             vector<int> v_Ligne_Avant = v_v_IdShift_Par_Personne_et_Jour[ligne];
 
@@ -894,28 +925,41 @@ void Ma_Solution::MetaHeuristique_Recherche_Local(Instance* inst) {
 
             // VÉRIFIER que la nouvelle ligne respecte bien les 10 contraintes
             if (this->Verifie_Dix_Contraintes(inst, ligne)) {
-                cout << "Ligne " << ligne << u8" corrigée avec succès !\n";
+                std::cout << "Ligne " << ligne << u8" corrigée avec succès !\n";
                 progression = true;
             }
             else {
-                cout << u8"Échec de correction pour la ligne " << ligne << ", restauration...\n";
+                std::cout << u8"Échec de correction pour la ligne " << ligne << ", restauration...\n";
                 v_v_IdShift_Par_Personne_et_Jour[ligne] = v_Ligne_Avant; // Restaurer
             }
         }
 
         // Recalculer le score après avoir traité toutes les lignes
         int Nouveau_Score = this->check_solution(inst);
-
-        cout << u8"\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
-
-        // Si aucune progression, on risque de boucler à l'infini
-        if (!progression && Nouveau_Score == Meilleur_Score) {
-            cout << u8"ATTENTION : Aucune progression possible, arrêt de la métaheuristique.\n";
-            break;
+        int scoreLignes10 = 0;
+        for (int ligne = 0; ligne < inst->get_Nombre_Personne(); ligne++) {
+            if (this->Verifie_Dix_Contraintes(inst, ligne)) {
+                scoreLignes10++;
+            }
         }
+
+        if(scoreLignes10 == precScoreLignes10) {
+            compteurStagnation10 ++;
+        } else {
+            compteurStagnation10 = 0;
+			precScoreLignes10 = scoreLignes10;
+		}
+
+        std::cout << u8"\n=== Score après itération : " << Nouveau_Score << " / 10 ===\n";
+        std::cout << u8"=== Nb personnes respectant les 9 contraintes : " << precScoreLignes << " / " << inst->get_Nombre_Personne() << " === \n";
+        std::cout << u8"=== Nb personnes respectant les 10 contraintes : " << scoreLignes10 << " / " << inst->get_Nombre_Personne() <<" === \n";
+        if(compteurStagnation10 > 0 ){
+            std::cout << u8"=== Stagnation détectée : " << compteurStagnation10 << "/" << maxStagnation << u8" itérations sans amélioration === \n";
+        }
+
 
         Meilleur_Score = Nouveau_Score;
     }
 
-    cout << u8"\n=== Métaheuristique terminée avec score final : " << Meilleur_Score << " / 10 ===\n";
+    std::cout << u8"\n=== Métaheuristique terminée avec score final : " << Meilleur_Score << " / 10 ===\n";
 }
