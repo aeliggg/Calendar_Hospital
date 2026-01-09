@@ -367,3 +367,7 @@
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst4.txt	37.5526	4631
+ Fichier données	 Tps de résolution 	 Best solution
+./Data/Inst8.txt	87.7112	4631
