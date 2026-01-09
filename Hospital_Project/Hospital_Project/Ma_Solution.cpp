@@ -662,8 +662,10 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
 
     int compteur_tentatives = 0;
     int max_tentatives = 50000; 
+    int compteur_max_tentatives_atteint = 0;
 
-    while (!this->Verifie_Neuf_Contraintes(inst, ligne_a_modifier)) {
+
+    while (!this->Verifie_Neuf_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 10) {
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
         int indice1 = rand() % v_Nouvelle_Ligne.size();
@@ -682,6 +684,7 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Consecutifs_Shifts(Instance* inst,
         if (compteur_tentatives > max_tentatives) {
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
+			compteur_max_tentatives_atteint++;
             cout << "Attention : nombre maximal de tentatives atteint pour la ligne "
                 << ligne_a_modifier << u8", redémarrage...\n";
         }
@@ -720,9 +723,10 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
     }
 
     int compteur_tentatives = 0;
-    int max_tentatives = 10000;
+    int max_tentatives = 50000;
+    int compteur_max_tentatives_atteint = 0;
 
-    while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier)) {
+    while (!this->Verifie_Dix_Contraintes(inst, ligne_a_modifier) && compteur_max_tentatives_atteint < 10) {
         v_v_IdShift_Par_Personne_et_Jour[ligne_a_modifier] = v_Nouvelle_Ligne;
 
         // Calculer combien de shifts minimum on doit ajouter
@@ -776,15 +780,15 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
                 int shift_choisi = shifts_disponibles[rand() % shifts_disponibles.size()];
                 v_Nouvelle_Ligne[jour_a_remplacer] = shift_choisi;
 
-                cout << "Ajout du shift " << shift_choisi << " au jour "
-                    << jour_a_remplacer << "\n";
+                //cout << "Ajout du shift " << shift_choisi << " au jour "
+                    //<< jour_a_remplacer << "\n";
 
                 // Retirer cet indice de la liste des repos disponibles
                 v_indices_repos.erase(v_indices_repos.begin() + idx_random);
             }
             else {
                 // Aucun shift disponible pour ce jour, essayer un autre jour
-                cout << "Aucun shift disponible pour le jour " << jour_a_remplacer << "\n";
+                //cout << "Aucun shift disponible pour le jour " << jour_a_remplacer << "\n";
             }
         }
         else {
@@ -806,6 +810,7 @@ vector<int> Ma_Solution::Genere_Ligne_Voisine_Minimum_Min_Travaille(Instance* in
         if (compteur_tentatives > max_tentatives) {
             v_Nouvelle_Ligne = v_Ligne_Originale;
             compteur_tentatives = 0;
+			compteur_max_tentatives_atteint++;
 
             // Recalculer les indices de repos
             v_indices_repos.clear();
