@@ -130,12 +130,12 @@ int Resolution(Instance * instance)
     uneSolution->i_valeur_fonction_objectif=4631;
  /* * * * * * * * * * * * */
     
-    Ma_Solution solution_initiale;
-    vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(instance);
-	solution_initiale.afficher_solution();
-	uneSolution->v_v_IdShift_Par_Personne_et_Jour = v_v_Solution_Initiale;
+	Ma_Solution solution_initiale;  // Création d'une instance de Ma_Solution pour générer une solution initiale
+	vector<vector<int>> v_v_Solution_Initiale = solution_initiale.creation_Solution_Initiale(instance);  // Génération de la solution initiale selon l'instance
+	solution_initiale.afficher_solution(); // Affichage de la solution initiale générée dans la console
+	uneSolution->v_v_IdShift_Par_Personne_et_Jour = v_v_Solution_Initiale; // Affectation de la solution initiale à l'objet uneSolution (pour la vérification dessous)
 
-    uneSolution->Verification_Solution(instance);
+	uneSolution->Verification_Solution(instance);  // Vérification de la solution via uneSolution
     
     i_val_Retour_Fct_obj=uneSolution->i_valeur_fonction_objectif;
     delete uneSolution;
